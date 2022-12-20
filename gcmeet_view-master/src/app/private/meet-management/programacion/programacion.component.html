@@ -1,0 +1,269 @@
+<div class="row position-relative">
+  <button class="btn round-btn pt-danger drop-btn fade" style="bottom: -3rem;" droppable="delete"
+    (dragover)="allowProgrammingDropItem($event)" (drop)="dropProgrammingDragItem($event)"
+    (dragleave)="setProgrammingContainerDropArea($event, false)"
+    (dragenter)="setProgrammingContainerDropArea($event, true)">
+    <i class="fas fa-trash block"></i>
+  </button>
+  <button class="btn round-btn pt-danger drop-btn fade" style="bottom: -3rem;" droppable="delete-option"
+    (dragover)="allowOptionDropItem($event)" (dragleave)="setOptionContainerDropArea($event, false)"
+    (dragenter)="setOptionContainerDropArea($event, true)" (drop)="dropOptionDragItem($event)">
+    <i class="fas fa-trash block"></i>
+  </button>
+  <div class="col-6 position-relative">
+    <div id="programming-list-update" class="fade">
+      <p class="font-weight-700 mt-3">Deshabilitado durante la actualización de valores</p>
+    </div>
+    <div class="height-100 width-100 position-absolute grab-section display-flex flex-direction-column col-padding"
+      style="top: 0; left: 0;">
+      <h6 class="margin-0 bg-octonary pt-2 pb-2 ps-2">Ordel del día</h6>
+      <!-- si hay programas -->
+      <ul class="width-100 primary-list programming-list height-100 pretty-scrollbar overflow-auto pe-2"
+        id="programming" droppable="programming" (dragover)="allowProgrammingDropItem($event)"
+        (dragleave)="setProgrammingContainerDropArea($event, false)"
+        (dragenter)="setProgrammingContainerDropArea($event, true)" (drop)="dropProgrammingDragItem($event)">
+        <!-- ngFor -->
+        <ng-container *ngFor="let programa of programas; let i = index">
+          <!-- ngClass -->
+          <li [attr.data-index]="i" [ngClass]="{'pb-0': programa.opciones.listadoOpciones!.length > 0}" draggable="true"
+            (dragleave)="seProgrammingDropArea($event, false)" (dragenter)="seProgrammingDropArea($event, true)"
+            (dragend)="breakProgrammingDragItem($event)" (dragstart)="setProgrammingDragItem($event)">
+            <!-- /ngClass -->
+            <div>
+              <i class="fas fa-bars cl-primary me-1"></i>
+              <div class="width-100">{{i+1}}. {{programa.titulo}}</div>
+            </div>
+            <!-- ngIf -->
+            <ul class="primary-list" [attr.droppable]="i">
+              <!-- ngFor -->
+              <ng-container *ngFor="let opcion of programa.opciones.listadoOpciones; let ix = index">
+                <li class="first-lvl" draggable="true" [attr.data-index]="i + '-' + ix"
+                  (dragleave)="seOptionDropArea($event, false)" (dragenter)="seOptionDropArea($event, true)">
+                  <i class="fas fa-bars cl-primary me-1"></i>
+                  <div class="lvl-line"></div>
+                  {{ix | letrasOrdenadas}}. {{ +programa.tipo === 5 ? opcion.descripcion : opcion.titulo }}
+                </li>
+              </ng-container>
+              <!-- /ngFor -->
+            </ul>
+            <!-- /ngIf -->
+          </li>
+        </ng-container>
+        <!-- /ngFor -->
+        <!-- si no hay programas -->
+        <li *ngIf="programas.length === 0" style="cursor: default;">
+          <div class="width-100">
+            <div class="m-0"></div>
+            <div class="width-100 text-align-center">Aún no se ha definido el orden del día</div>
+          </div>
+        </li>
+        <!-- /si no hay programas -->
+      </ul>
+    </div>
+  </div>
+  <div class="col-6 position-relative" style="padding: 0;">
+    <div id="programming-form-update" class="fade" droppable="update" (dragover)="allowProgrammingDropItem($event)"
+      (drop)="dropProgrammingDragItem($event)" (dragleave)="setProgrammingContainerDropArea($event, false)"
+      (dragenter)="setProgrammingContainerDropArea($event, true)">
+      <p class="font-weight-700 mt-3">Suelte aquí para modificar la pregunta</p>
+    </div>
+    <div class="pretty-scrollbar overflow-auto col-padding" style="max-height: calc(70vh - 3rem);"
+      [formGroup]="programacion">
+      <h6 class="margin-0">Agregar pregunta</h6>
+      <form id="programming-form" class="mt-2" formGroupName="formulario" (ngSubmit)="agregarPrograma()">
+        <div class="input-group ps-1 pe-1 mb-2" id="index-programa" hidden>
+          <input type="text" class="form-control" disabled>
+          <span class="input-group-text"
+            (click)="cancelarModificacion(); message.success('Se ha cancelado la actualización del programa');"><i
+              class="fas fa-times"></i></span>
+        </div>
+        <label class="mt-2 mb-2 position-relative width-100">
+          <div class="position-absolute">Tipo de respuesta</div>
+          <select class="form-select" formControlName="tipo" #eleccion (change)="leerValueOption(eleccion.value)">
+            <option value="0">Sin respuesta</option>
+            <option value="1">Votación</option>
+            <option value="2">Selección única</option>
+            <option value="3">Selección múltiple</option>
+            <option value="4">Entrada de texto</option>
+            <option *ngIf="+formularioReunion.get('id_acta')?.value !== 0" value="5">Elección</option>
+          </select>
+        </label>
+        <input required type="text" class="form-control" formControlName="titulo" placeholder="Titulo *">
+        <textarea class="form-control mt-2" formControlName="descripcion" placeholder="Descripción"></textarea>
+
+        <label class="primary-input-file mt-2" formGroupName="archivos">
+          <input type="file" formControlName="text_input" multiple (change)="detectFiles($event, archivos)"
+            accept=".png, .jpg, .jpeg, .gif, .xlsx, .csv, .pdf, .docx, .txt, .pptx, .svg">
+        </label>
+
+        <!-- ngFor -->
+        <ul class="primary-list file-list">
+          <ng-container *ngFor="let archivo of archivos.value; let i = index;">
+            <li>
+              <i class="far fa-file cl-primary me-1"></i>
+              <a [href]="domSanitizer.bypassSecurityTrustResourceUrl(archivo.url)" [download]="archivo.file.name"
+                class="me-2">{{ archivo.file.name }}</a>
+              <span class="me-2">{{ archivo.file.size | formBytes }}</span>
+              <i class="fas fa-times me-1" (click)="removeArchivo(i, archivos)"></i>
+            </li>
+          </ng-container>
+        </ul>
+        <!-- /ngFor -->
+
+        <!-- Sector que se expande cuando el tipo de programa es votacion, seleccion unica, seleccion multiple, entrada de texto o sin respuesta -->
+        <ng-container
+          *ngIf="(+formularioReunion.get('id_acta')?.value !== 0 && eleccion.value !== '5') || (+formularioReunion.get('id_acta')?.value === 0); else: sectorEleccion">
+          <div class="height-100 rounded-border bordered shadowed bg-octonary p-3 mt-2" formGroupName="opciones">
+            <div class="input-group ps-1 pe-1">
+              <input class="form-control font-weight-700" type="text" formControlName="opcion_descripcion"
+                placeholder="Agregar opción">
+              <span class="input-group-text" (click)="agregarOpcion()"><i class="fas fa-plus"></i></span>
+            </div>
+            <ul formArrayName="listadoOpciones" class="option-list" id="option-form-list" droppable="option"
+              (dragover)="allowOptionDropItem($event)" (drop)="dropOptionDragItem($event)"
+              (dragenter)="setOptionContainerDropArea($event, true)"
+              (dragleave)="setOptionContainerDropArea($event, false)">
+              <!-- ngFor -->
+              <ng-container
+                *ngFor="let opcion of (programacion.get('formulario')!.get('opciones')!.get('listadoOpciones') | getFormArray).controls; let i = index">
+                <li class="row no-row-margin" draggable="true" [attr.data-index]="i"
+                  (dragenter)="seItemDropArea($event, true, 'form-option-')"
+                  (dragleave)="seItemDropArea($event, false, 'form-option-')" (dragend)="breakOptionDragItem($event)"
+                  (dragstart)="setOptionDragItem($event)" [formGroupName]="i">
+                  <div class="col-8" style="padding-left: 0;">
+                    <div class="display-flex">
+                      <i class="fas fa-bars cl-primary me-2 cursor-move"></i>
+                      <input class="form-control primary-form" type="text" formControlName='titulo'
+                        placeholder="Título *">
+                    </div>
+                    <textarea class="form-control mt-2 small-textarea" formControlName="descripcion"
+                      placeholder="Descripción"></textarea>
+                  </div>
+                  <div class="col-4" style="padding-right: 0;">
+                    <label class="secondary-input-file mt-2">
+                      <i class="fas fa-cloud-upload-alt block" style="font-size: 2.6rem;"></i>
+                      <input type="file" name="files" multiple
+                        (change)="detectFiles($event, getFormArray.transform(opcion.get('archivos')!.get('listadoArchivos')))">
+                    </label>
+                    <!-- ngIf -->
+                    <div class="dropdown dropup">
+                      <p class="text-align-center margin-0 pt-1 cursor-pointer" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        {{opcion.value.archivos.listadoArchivos.length}} Archivos
+                      </p>
+                      <ul class="dropdown-menu primary-list dwn-file-list">
+                        <!-- ngFor -->
+                        <ng-container *ngFor="let archivo of opcion.value.archivos.listadoArchivos; let i = index">
+                          <li>
+                            <i class="far fa-file cl-primary me-2"></i>
+                            <a target="_blank"
+                              [href]="domSanitizer.bypassSecurityTrustResourceUrl(storage + archivo.url)"
+                              [download]="archivo.file.name" class="me-3">
+                              {{archivo.file.name}}
+                            </a>
+                            <i class="fas fa-times"
+                              (click)="removeArchivo(i, getFormArray.transform(opcion.get('archivos')!.get('listadoArchivos')))"></i>
+                          </li>
+                        </ng-container>
+                        <ng-container *ngIf="opcion.value.archivos.listadoArchivos.length === 0">
+                          <li>
+                            <span>No se han cargado archivos</span>
+                          </li>
+                        </ng-container>
+                        <!-- /ngFor -->
+                      </ul>
+                    </div>
+                    <!-- /ngIf -->
+                  </div>
+                </li>
+              </ng-container>
+              <!-- /ngFor -->
+            </ul>
+          </div>
+        </ng-container>
+
+        <!-- Sector que se expande cuando el tipo de programa es ELECCION -->
+        <ng-template #sectorEleccion>
+          <div class="height-100 rounded-border bordered shadowed bg-octonary p-3 mt-2"
+            style="padding: 15px; border: 1px solid #CFCFCF; border-radius: 7px;">
+            <div formGroupName="rolesActas">
+              <!-- Lugar para digitar el rol a postular -->
+              <input autocomplete="off" type="text" class="mt-2 form-control" #buscadorRolActa list="roles-actas-list"
+                (change)="autocompletarRolActa($any($event.target).value);" placeholder="Rol a elegir"
+                formControlName="descripcion">
+              <datalist id="roles-actas-list">
+                <ng-container *ngFor="let rolActa of rolesActas; let i = index">
+                  <option value="{{ rolActa.id_rol_acta }}">{{ rolActa.descripcion }}</option>
+                </ng-container>
+              </datalist>
+
+              <!-- Checkbox para definir que requiere acta
+              <div class="row">
+                <div class="col-sm-6 col-lg-6 mt-2">
+                  <div class="card cards-medio">
+                    <div class="form-check form-switch form-switch-inverted mt-2"
+                      style="padding-top: 2px; padding-bottom: 5px; padding-left: 10px; text-align: left;">
+                      <label class="form-check-label">
+                        <input style="margin-right: 5px;" class="form-check-input form-check-switch" type="checkbox"
+                          formControlName="acta">
+                        <span class="me-1">¿Requiere Acta?</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                Checkbox para definir si requiere firma acta
+                <div class="col-sm-6 col-lg-6 mt-2">
+                  <div class="card cards-medio">
+                    <div class="form-check form-switch form-switch-inverted mt-2"
+                      style="padding-top: 2px; padding-bottom: 5px; padding-left: 10px; padding-right: 0px; text-align: left;">
+                      <label class="form-check-label">
+                        <input style="margin-right: 5px;" class="form-check-input form-check-switch" type="checkbox"
+                          formControlName="firma">
+                        <span class="me-1">¿Firma acta?</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div> -->
+
+              <!-- Espacio para seleccionar los recurso que se les va imponer el rol a postular -->
+              <input autocomplete="off" type="text" class="mt-2 form-control" #buscadorRecursos
+                (change)="agregarRecursoActa($any($event.target).value); buscadorRecursos.value = '';"
+                [attr.list]="'recursos-list'" placeholder="Postular convocado">
+              <datalist id="recursos-list">
+                <ng-container *ngFor="let recurso of dataCompleta; let i = index">
+                  <option value="{{ recurso.identificacion }}">{{ recurso.nombre }}</option>
+                </ng-container>
+              </datalist>
+
+            </div>
+            <ul class="width-100 primary-list mt-2 summon-list-preview" style="padding-right: 7px; padding-left: 7px;">
+              <!-- ngIf -->
+              <li
+                *ngIf="!(programacion.get('formulario')!.get('opciones')!.get('listadoOpciones') | getFormArray).controls.length">
+                <div class="width-100">No hay convocados postulados</div>
+              </li>
+
+              <ng-container
+                *ngFor="let opcion of (programacion.get('formulario')!.get('opciones')!.get('listadoOpciones') | getFormArray).controls; let i = index">
+                <li style="padding-bottom: 7px;">
+                  <div class="width-100" style="text-align: left;">
+                    {{i | letrasOrdenadas}}. {{opcion.value.descripcion}}
+                  </div>
+                  <i class="fas fa-times" style="cursor: pointer; min-width: 1rem;"
+                    (click)="removerRecursoActa(i);"></i>
+                </li>
+              </ng-container>
+            </ul>
+          </div>
+        </ng-template>
+
+        <button type="submit" class="btn width-100 mt-2 white-color">
+          <i class="fas fa-plus-square me-2"></i>
+          <span>Confirmar</span>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

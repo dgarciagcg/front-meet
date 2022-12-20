@@ -1,0 +1,32 @@
+.left-aside {
+  border-right: 0.0625rem solid #dee6ee;
+  background: var(--hex-primary-palette);
+  padding: 2.5rem 1rem 2.5rem 2.5rem;
+  flex-direction: column;
+  min-width: 15.625rem;
+  color: #ffffff;
+  width: 15.625rem;
+  display: flex;
+}
+
+.go-home-button {
+  color: var(--hex-quaternary-palette);
+}
+
+.go-home-button:active,
+.go-home-button:focus,
+.go-home-button:hover {
+  color: var(--hex-quaternary-palette);
+}
+
+.logout-button {
+  transition: all 180ms ease;
+  background: var(--hex-quaternary-palette);
+}
+
+.logout-button:active,
+.logout-button:focus,
+.logout-button:hover {
+  background: rgba(var(--quaternary-palette), 0.9);
+  box-shadow: 0.125rem 0.5rem 1.25rem #41414196;
+}

@@ -1,0 +1,381 @@
+.drop-btn {
+    box-shadow: 0px 0.1875rem 1.25rem #0000001c;
+    transform: translate(-50%, 0.5rem);
+    position: absolute;
+    width: auto;
+    z-index: 2;
+}
+
+.drop-btn:not(.summon-drop-btn) {
+    left: 50%;
+    bottom: 0;
+}
+
+.summon-drop-btn {
+    bottom: 1rem;
+    left: 25%;
+}
+
+.drop-btn.fade {
+    display: none;
+}
+
+ul.primary-list.programming-list li,
+ul.primary-list.summon-list li > div {
+    align-items: center;
+    font-weight: 600;
+    cursor: move;
+}
+
+ul.primary-list.summon-list-preview li {
+    align-items: center;
+    font-weight: 600;
+}
+ul.primary-list.summon-list li {
+    padding-bottom: 0;
+    padding-top: 0;
+    display: block;
+}
+
+ul.primary-list.summon-list li > div {
+    padding-bottom: 1rem;
+    padding-top: 1rem;
+    flex-wrap: wrap;
+    display: flex;
+}
+
+ul.primary-list.programming-list li:active,
+ul.primary-list.summon-list li:active > div {
+    background: var(--hex-octonary-palette);
+}
+
+ul.primary-list.summon-list-preview li,
+ul.primary-list.summon-list li > div,
+ul.primary-list.file-list li {
+    flex-wrap: nowrap;
+}
+
+ul.primary-list.programming-list li > ul.primary-list > li {
+    padding-left: 0.5rem;
+}
+
+ul.primary-list.summon-list-preview > li:last-child,
+ul.primary-list.programming-list > li:last-child,
+ul.primary-list.summon-list > li:last-child {
+    border-bottom: 0.0625rem solid #cbcbcb;
+}
+
+ul.primary-list.programming-list li > :first-child {
+    display: flex;
+}
+
+ul.primary-list.programming-list li > ul.primary-list > li > :first-child,
+ul.primary-list.programming-list li > :first-child :first-child,
+ul.primary-list.summon-list li > div > :first-child,
+ul.primary-list.summon-preview li > :first-child,
+ul.primary-list.file-list li > :first-child {
+    margin-bottom: auto;
+    padding: 0 0.75rem;
+    margin-top: auto;
+}
+
+ul.primary-list.dwn-file-list li > .fas,
+ul.primary-list.dwn-file-list li > .far,
+ul.primary-list.file-list li > .fas,
+ul.primary-list.file-list li > .far {
+    font-size: 0.6875rem;
+}
+
+ul.primary-list.summon-list-preview li > :last-child,
+ul.primary-list.summon-list li > div > :last-child {
+    font-size: 0.6875rem;
+    text-align: center;
+    min-width: 6.25rem;
+    color: #545454;
+}
+
+#programming-list-update,
+#programming-form-update,
+#summon-form-update {
+    height: calc(100% + ((var(--bs-gutter-x) * 0.5) * 2));
+    background: rgba(var(--secondary-palette), 0.8);
+    top: calc(var(--bs-gutter-x) * -0.5);
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    display: flex;
+    width: 100%;
+    z-index: 1;
+    left: 0;
+}
+
+#programming-list-update.fade,
+#programming-form-update.fade,
+#summon-form-update.fade {
+    display: none;
+}
+
+ul.primary-list.dwn-file-list li,
+ul.primary-list.file-list li {
+    font-size: 0.6875rem;
+}
+
+ul.primary-list.dwn-file-list li {
+    flex-wrap: nowrap;
+    padding: 0.5rem;
+    border: none;
+}
+
+ul.primary-list.dwn-file-list > li > :nth-child(2),
+ul.primary-list.file-list li > :nth-child(2) {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    color: #545454;
+    width: 100%;
+}
+
+ul.primary-list.file-list li > :nth-child(2) {
+    white-space: nowrap;
+}
+
+ul.primary-list.dwn-file-list > li > :nth-child(2) {
+    line-height: 1;
+}
+
+ul.primary-list.file-list li > :nth-child(3) {
+    white-space: nowrap;
+    color: #8b8b8b;
+    font-weight: 100;
+}
+
+ul.primary-list.dwn-file-list > li :last-child,
+ul.primary-list.file-list li :last-child {
+    color: #bababa;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+ul.primary-list.dwn-file-list li :last-child:hover,
+ul.primary-list.file-list li :last-child:hover {
+    color: var(--hex-danger-palette);
+}
+
+.card.meet-type-card {
+    box-shadow: 0rem 0.1875rem 1.25rem #194b7014;
+    background: var(--hex-quaternary-palette);
+    border: 0.0625rem solid #e6e6e6;
+    border-radius: 0.4rem;
+}
+
+.card.meet-type-card > .card-body > .card > .card-title > :first-child {
+    --selected-palette: 207, 207, 207;
+    background-color: #ffffff;
+    border-color: currentColor;
+}
+
+.card.meet-type-card.active {
+    border: 0.0625rem solid var(--hex-nonary-palette);
+}
+
+.card.meet-type-card.active > .card-body > .card > .card-title > :first-child,
+.card.meet-type-card:hover > .card-body > .card > .card-title > :first-child,
+.card.meet-type-card:focus > .card-body > .card > .card-title > :first-child {
+    --selected-palette: var(--nonary-palette);
+}
+
+.card.meet-type-card > .card-body > .card > .card-title > :first-child:hover,
+.card.meet-type-card > .card-body > .card > .card-title > :first-child:focus {
+    background-color: rgb(var(--selected-palette, #ffffff));
+}
+
+.card.meet-type-card {
+    margin-top: 0.5rem;
+}
+
+.floating-btn {
+    transform: translateY(50%);
+    position: absolute;
+    right: 0.5rem;
+    z-index: 1;
+    bottom: 0;
+}
+
+.floating-btn2 {
+    transform: translateY(50%);
+    position: absolute;
+    right: 3rem;
+    z-index: 1;
+    bottom: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+}
+
+ul.option-list {
+    list-style-type: none;
+    padding-right: 0.25rem;
+    padding-left: 0.25rem;
+    margin: 0;
+}
+
+ul.option-list > li {
+    border-bottom: 0.0625rem solid #e6e6e6;
+    padding: 1rem 0;
+}
+
+.programming-target-droppable-area,
+.target-droppable-area {
+    border: 0.125rem dashed var(--hex-nonary-palette) !important;
+}
+
+.form-option-item-droppable-area,
+.item-droppable-area {
+    position: relative;
+}
+
+.programming-container-droppable-area > .programming-item-droppable-area > ul.primary-list::after,
+.programming-container-droppable-area::after,
+.programming-item-droppable-area::before,
+.form-option-item-droppable-area::before,
+.option-item-droppable-area::before,
+.container-droppable-area::after,
+.item-droppable-area::before {
+    background: rgba(var(--senary-palette), 0.2);
+    color: var(--hex-senary-palette);
+    text-align: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    display: block;
+    width: 100%;
+}
+
+.form-option-item-droppable-area::before,
+.container-droppable-area::after,
+.item-droppable-area::before {
+    content: "Suelte aquí";
+}
+
+.programming-container-droppable-area > .programming-item-droppable-area > ul.primary-list::after,
+.programming-item-droppable-area::before,
+.form-option-item-droppable-area::before,
+.option-item-droppable-area::before,
+.item-droppable-area::before {
+    padding: 0.5rem;
+}
+
+.programming-container-droppable-area::after,
+.container-droppable-area::after {
+    padding: 1.5rem;
+}
+
+ul.primary-list.programming-container-droppable-area > .programming-item-droppable-area {
+    padding-bottom: 0;
+    padding-top: 0;
+}
+
+.programming-container-droppable-area > .programming-item-droppable-area > ul.primary-list::after {
+    margin-top: 1rem;
+}
+
+.programming-container-droppable-area > .programming-item-droppable-area > ul.primary-list::after,
+.option-item-droppable-area::before {
+    content: "Suelte aquí para agregar como opción";
+    background: rgba(var(--quinary-palette), 0.2);
+    color: var(--hex-quinary-palette);
+}
+
+.programming-container-droppable-area::after,
+.programming-item-droppable-area::before {
+    background: rgba(var(--senary-palette), 0.2);
+    content: "Suelte aquí para mover pregunta";
+    color: var(--hex-senary-palette);
+}
+
+.programming-container-droppable-area
+    > .programming-item-droppable-area
+    > ul.primary-list
+    > .option-item-droppable-area,
+.programming-item-droppable-area {
+    padding-top: 0;
+}
+
+.programming-item-droppable-area .option-item-droppable-area::before,
+.programming-container-droppable-area > .programming-item-droppable-area::before {
+    margin-bottom: 1rem;
+}
+
+.programming-container-droppable-area > .programming-item-droppable-area > ul.primary-list :last-child {
+    padding-bottom: 0;
+}
+
+ul.option-list > li.form-option-item-droppable-area {
+    border-top: 0.0625rem solid #e6e6e6;
+    padding-top: 0;
+}
+
+.form-option-item-droppable-area::before {
+    width: calc(100% + 0.5rem);
+    margin-right: -0.25rem;
+    margin-left: -0.25rem;
+    margin-bottom: 1rem;
+}
+
+ul.option-list.container-droppable-area {
+    margin-top: 1rem;
+}
+
+ul.option-list.container-droppable-area::after {
+    width: calc(100% + 0.5rem);
+    margin-right: -0.25rem;
+    margin-left: -0.25rem;
+}
+
+.card-btn:focus {
+    color: var(--hex-quaternary-palette);
+}
+
+.custom-form-control {
+    border-radius: 0.4rem;
+}
+
+.custom-form-control .input-group-text {
+    border-bottom: 0.0625rem solid #e6e6e6;
+    border-left: 0.0625rem solid #e6e6e6;
+    border-top: 0.0625rem solid #e6e6e6;
+    background: #ffffff;
+    padding-right: 0.25rem;
+}
+
+.custom-form-control .input-group-text i {
+    color: #cfcfcf;
+}
+
+.custom-form-control .form-control {
+    border-left: none;
+    color: #171717;
+}
+
+.custom-form-control:focus-within,
+.custom-form-control:focus {
+    box-shadow: 0 0 0 0.25rem rgb(13 110 253 / 25%);
+    position: relative;
+    z-index: 4;
+    outline: 0;
+}
+
+.custom-form-control .form-control:focus {
+    box-shadow: none;
+}
+
+.cards-medio {
+    border-bottom: 0.0625rem solid #e6e6e6;
+    border-left: 0.0625rem solid #e6e6e6;
+    border-top: 0.0625rem solid #e6e6e6;
+    background: #ffffff;
+    padding-right: 0.25rem;
+}
+
+.file-select {
+    background-color: #ebebeb;
+    border-radius: 7px;
+}

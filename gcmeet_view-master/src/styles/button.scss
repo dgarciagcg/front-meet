@@ -1,0 +1,136 @@
+.btn {
+  padding: 0.5rem 0.75rem;
+  letter-spacing: normal;
+  font-size: 0.8rem;
+  outline: 0;
+}
+
+.btn,
+.btn-large,
+.btn-small,
+.btn-flat {
+  text-transform: none;
+  height: auto;
+}
+
+.z-depth-1,
+nav,
+.card-panel,
+.card,
+.toast,
+.btn,
+.btn-large,
+.btn-small,
+.btn-floating,
+.dropdown-content,
+.collapsible,
+.sidenav {
+  box-shadow: none;
+}
+
+.btn:hover,
+.btn-large:hover,
+.btn-small:hover {
+  background-color: initial;
+}
+
+.btn:focus,
+.btn-large:focus,
+.btn-small:focus,
+.btn-floating:focus {
+  background-color: initial;
+}
+
+.z-depth-1-half,
+.btn:hover,
+.btn-large:hover,
+.btn-small:hover,
+.btn-floating:hover {
+  box-shadow: 0 0 0 0.25rem rgb(13 110 253 / 25%);
+}
+
+.btn i,
+.btn-large i,
+.btn-small i,
+.btn-floating i,
+.btn-large i,
+.btn-small i,
+.btn-flat i {
+  line-height: 1;
+}
+
+.btn.filled-btn {
+  background: rgb(var(--selected-palette));
+  color: var(--hex-secondary-palette);
+}
+
+.btn.filled-btn:hover {
+  background: var(--hex-secondary-palette);
+  border: 0.0625rem solid currentColor;
+  color: rgb(var(--selected-palette));
+}
+
+.btn.outlined-btn {
+  background: var(--hex-secondary-palette);
+  border: 0.0625rem solid currentColor;
+  color: rgb(var(--selected-palette));
+}
+
+.btn.outline-btn {
+  background: var(--hex-secondary-palette);
+  color: rgb(var(--selected-palette));
+}
+
+.btn.outlined-btn:hover,
+.btn.outline-btn:hover {
+  background: rgb(var(--selected-palette));
+  color: var(--hex-secondary-palette);
+}
+
+.btn.small-btn {
+  padding: 0.25rem 0.5rem;
+}
+
+.btn.fas,
+.btn.far {
+  font-size: 1rem;
+  padding: 0;
+}
+
+.btn::before,
+.btn::after,
+.btn {
+  border-radius: 0.4rem;
+}
+
+.btn[class*="round-btn"] {
+  transition: background 0.25s, color 0.25s;
+  border-color: #e6e6e6;
+  border-width: 0.0625rem;
+  border-style: solid;
+  border-radius: 50%;
+}
+
+.btn[class*="round-btn"]:not(.outline-btn),
+.btn.outline-btn[class*="round-btn"]:hover {
+  color: rgb(var(--selected-palette, var(--primary-palette)));
+  background: var(--hex-secondary-palette);
+}
+
+.btn[class*="round-btn"]:not(.outline-btn):hover,
+.btn.outline-btn[class*="round-btn"] {
+  background: rgb(var(--selected-palette, var(--primary-palette)));
+  color: var(--hex-secondary-palette);
+}
+
+.btn.round-btn {
+  padding: 0.75rem;
+}
+
+.btn.sm-round-btn {
+  padding: 0.5rem;
+}
+
+.btn.smr-round-btn {
+  padding: 0.3rem;
+}

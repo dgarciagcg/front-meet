@@ -1,0 +1,44 @@
+<aside class="left-aside">
+    <!-- Logo -->
+    <!-- <img src="assets/img/gcm-icon.png" style="width: 100%;"> -->
+    <a class="h5 margin-0 go-home-button" href="meets">
+        <span class="font-weight-400">GC</span>meet
+    </a>
+    <p class="mt-5 mb-2">Menú</p>
+    <!-- Menú -->
+    <div class="list-group pretty-scrollbar" style="flex: 1 1 auto; overflow: auto;">
+        <a class="list-group-item opaque-bg-inty-1" routerLink="/private/meets" routerLinkActive="active">
+            <i class="fas fa-handshake"></i>
+            <span>Reuniones</span>
+        </a>
+    </div>
+    <!-- Cerrar sesión -->
+    <button class="btn logout-button" data-bs-toggle="modal" data-bs-target="#logout-confirm-modal">
+        <i class="fas fa-sign-out-alt me-2 cl-primary"></i>
+        <span>Cerrar sesión</span>
+    </button>
+</aside>
+
+<!-- Modal confirmar cierre de sesión -->
+<div class="modal fade" id="logout-confirm-modal" tabindex="-1" aria-labelledby="reschedule-confirm-modal-label"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reschedule-confirm-modal-label">Cerrar sesión</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="padding: 1rem;">
+                <p class="text-align-center margin-0">
+                    A continuación se cerrará la sesión activa.
+                </p>
+                <p class="text-align-center mt-2 margin-bottom-0">¿Desea continuar?</p>
+            </div>
+            <div class="modal-footer border-top-none">
+                <button class="btn outline-btn small-btn pt-tertiary" data-bs-dismiss="modal">Cancelar</button>
+                <button class="btn filled-btn small-btn pt-septenary" data-bs-dismiss="modal"
+                    (click)="logout()">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>

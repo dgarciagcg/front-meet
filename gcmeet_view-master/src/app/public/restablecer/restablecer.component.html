@@ -1,0 +1,32 @@
+<div class="page-content background-size-cover background-position-center background-repeat-no-repeat"
+    style="background-image: url(assets/img/landing/background.jpg); padding: 0;">
+    <div class="display-flex width-100 height-100 align-items-center justify-content-center flex-direction-column">
+        <h1 class="font-weight-100" style="margin: 0 0 2rem;">
+            <span class="cl-quaternary">RESTABLECER</span>
+            <span class="cl-quinary">CONTRASEÑA</span>
+        </h1>
+        <div class="padding-200rem bg-quaternary rounded-border text-align-center" style="width: 27.5rem;">
+            <img src="assets/img/icons/lock.png" style="width: 3rem;">
+            <form [formGroup]="formularioRestablecimiento">
+                <div class="input-group margin-top-100rem">
+                    <div class="input-group-text"><i class="fas fa-key"></i></div>
+                    <input autocomplete="off" class="form-control" type="password" formControlName="contrasena"
+                        placeholder="Nueva contraseña" required>
+                </div>
+                <div autocomplete="off" class="input-group margin-top-100rem">
+                    <div class="input-group-text"><i class="fas fa-key"></i></div>
+                    <input class="form-control" type="password" formControlName="confirmar"
+                        placeholder="Confirmar contraseña" required>
+                </div>
+                <button class="btn width-100 margin-top-100rem" type="submit" (click)="reestablecer()">
+                    Restablecer contraseña
+                </button>
+            </form>
+        </div>
+        <a class="return-button" routerLink="/public/login">Volver</a>
+    </div>
+</div>
+
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="square-jelly-box" [fullScreen]="true">
+    <p style="color: white"> Cargando... </p>
+</ngx-spinner>

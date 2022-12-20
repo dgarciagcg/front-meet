@@ -1,0 +1,822 @@
+<!-- Lateral izquierdo -->
+<aside class="left-aside">
+    <a [routerLink]="rol === 'Administrador' ? ('/private/meets') : ('/public/reunion/sala-espera/' + identificador)"
+        class="btn" title="Volver">
+        <i class="fas fa-chevron-left block"></i>
+    </a>
+    <div class="height-100">
+        <a routerLink="/" class="h5 margin-0 go-home-button">
+            <span class="font-weight-400">GC</span>meet
+        </a>
+    </div>
+    <button class="btn" title="Salir de la reunión" (click)="logout()">
+        <i class="fas fa-sign-out-alt block"></i>
+    </button>
+</aside>
+<!-- Centro -->
+<section class="page-content pretty-scrollbar" id="page-content-reunion">
+    <h6 class="page-title text-style margin-bottom-0">{{meet?.titulo || ''}}</h6>
+    <!-- Añadir pregunta de 1ra -->
+    <div class="width-100" *ngIf="rol === 'Administrador' && !this.currentProgram">
+        <button class="btn mt-2 display-inline-flex" data-bs-toggle="modal" style="padding: 0 0.75rem;"
+            (click)="orderTarget = 1; programToSave = undefined;" data-bs-target="#programming-modal">
+            <i class="fas fa-plus block"></i>
+            <span class="ms-2">Añadir una pregunta</span>
+        </button>
+    </div>
+
+    <!-- Listado de tipos -->
+    <ng-template #listadoTipos let-item="item">
+        <ng-container *ngIf="item.opciones.length">
+            <ng-container *ngFor="let option of item.opciones; last as l;">
+
+                <div [ngClass]="{ 'bordered-on-bottom': !l }">
+                    <!-- Sin respuesta -->
+                    <ng-container *ngIf="+option.tipo === 0">
+                        <ng-container *ngTemplateOutlet="description; context: { option: option };">
+                        </ng-container>
+                        <ng-container *ngTemplateOutlet="unanswered; context: { option: option };">
+                        </ng-container>
+                    </ng-container>
+                    <!-- Voto -->
+                    <ng-container *ngIf="+option.tipo === 1">
+                        <ng-container *ngTemplateOutlet="collapsableDescription; context: { option: option };">
+                        </ng-container>
+                        <ng-container *ngTemplateOutlet="voteOption; context: { option: option };">
+                        </ng-container>
+                    </ng-container>
+                    <!-- Entrada de texto -->
+                    <ng-container *ngIf="+option.tipo === 4">
+                        <ng-container *ngTemplateOutlet="collapsableDescription; context: { option: option };">
+                        </ng-container>
+                        <ng-container *ngTemplateOutlet="textAreaOption; context: { option: option };">
+                        </ng-container>
+                    </ng-container>
+                    <!-- Elección -->
+                    <ng-container *ngIf="[2, 3, 5].includes(+option.tipo)">
+                        <ng-container *ngTemplateOutlet="collapsableDescription; context: { option: option };">
+                        </ng-container>
+                        <ng-container *ngTemplateOutlet="electionOption; context: { option: option };">
+                        </ng-container>
+                    </ng-container>
+                </div>
+
+            </ng-container>
+        </ng-container>
+    </ng-template>
+
+    <!-- Listado de programas -->
+    <ng-container *ngFor="let item of programmingList; last as pl;">
+        <div class="position-relative">
+            <div [ngClass]="{ 'programming-collapsable': +item.estado === 1 }" class="primary-collapsable-card mt-2">
+                <!-- Cabecera del plegable -->
+                <div class="primary-collapsable-header primary-collapsable font-weight-400"
+                    [collapsableAllowClick]="rol === 'Administrador' || +item.estado === 2"
+                    [appCollapsable]="'#collapsable-content-' + item.id_programa"
+                    [id]="'collapsable-of-' + item.id_programa">
+                    <div class="display-flex">
+                        <i class="fas fa-hourglass-end cl-eleventh block me-3" *ngIf="+item.estado === 0"></i>
+                        <i class="fas fa-circle-notch cl-quinary block me-3" *ngIf="+item.estado === 1"></i>
+                        <i class="fas fa-check cl-septenary block me-3" *ngIf="+item.estado === 2"></i>
+                        <i class="fas fa-ban cl-danger block me-3" *ngIf="+item.estado === 3"></i>
+                        <span style="line-height: 1.3;">{{item.orden}}. {{item.titulo}}</span>
+                    </div>
+                    <i class="fas block collapsable-icon cl-eleventh" style="margin-left: 5rem;"
+                        collapsable-content="&#xf078;" collapsable-activated-content="&#xf077;"></i>
+                </div>
+                <!-- Cuerpo del plegable -->
+                <div class="primary-collapsable-content" [id]="'collapsable-content-' + item.id_programa">
+                    <div class="primary-collapsable-body" style="padding: 0.66rem 1.32rem">
+                        <!-- Datos del programa -->
+                        <div class="position-relative pe-3" style="min-height: 2rem; white-space: pre-line;">
+                            <!-- {{item.descripcion || (item.opciones.length ? '' : 'No tiene descripción')}} -->
+                            <ng-container *ngIf="item.archivos.length">
+                                <i class="far fa-file-pdf cursor-pointer dropdown-trigger position-absolute top-0 right-0 z-index-1"
+                                    tabindex="0" [attr.data-target]="'file-dwn-' + item.id_programa"
+                                    [appDropdownMaterialize]="'#page-content-reunion'" style="font-size: 1rem;"
+                                    title="Archivos"></i>
+
+                                <!-- Dropdown Structure -->
+                                <ul class='dropdown-content' [id]="'file-dwn-' + item.id_programa">
+                                    <ng-container *ngFor="let archivo of item.archivos">
+                                        <li>
+                                            <a [href]="(storage + archivo.url) | safeUrl" download target="_blank">
+                                                {{archivo.descripcion}}
+                                            </a>
+                                        </li>
+                                    </ng-container>
+                                </ul>
+                            </ng-container>
+                        </div>
+                        <!-- Sin respuesta -->
+                        <ng-container *ngIf="+item.tipo === 0">
+                            <!-- {{item.descripcion || 'No tiene descripción'}} -->
+                            <ng-container *ngTemplateOutlet="listadoTipos; context: { item: item };"></ng-container>
+                        </ng-container>
+                        <!-- Voto -->
+                        <ng-container *ngIf="+item.tipo === 1">
+                            <ng-container *ngTemplateOutlet="vote; context: { option: item };"></ng-container>
+                            <ng-container *ngTemplateOutlet="listadoTipos; context: { item: item };"></ng-container>
+                        </ng-container>
+                        <!-- Entrada de texto -->
+                        <ng-container *ngIf="+item.tipo === 4">
+                            <ng-container *ngTemplateOutlet="textArea; context: { option: item };"></ng-container>
+                            <ng-container *ngTemplateOutlet="listadoTipos; context: { item: item };"></ng-container>
+                        </ng-container>
+
+                        <ng-container *ngIf="[2, 3, 5].includes(+item.tipo)">
+                            <ng-container *ngTemplateOutlet="election; context: { option: item };">
+                            </ng-container>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+            <!-- Botones del plegable -->
+            <div class="position-absolute z-index-1 display-flex" style="right: 2.5rem; top: 0.66rem;"
+                *ngIf="rol === 'Administrador'">
+                <!-- *ngIf="rol === 'Administrador' && [0, 1].includes(+item.estado)"> -->
+                <i class="fas fa-edit block cl-primary cursor-pointer cl-primary" data-bs-target="#programming-modal"
+                    data-bs-toggle="modal" (click)="orderTarget = undefined; programToSave = item;">
+                </i>
+                <i class="fas fa-trash cl-danger block cursor-pointer cl-primary ms-3"
+                    data-bs-target="#program-cancel-confirm-modal" data-bs-toggle="modal"
+                    (click)="programToCancel = item.id_programa;">
+                </i>
+            </div>
+            <ng-container *ngIf="rol === 'Administrador'">
+                <!-- <ng-container *ngIf="[0, 1].includes(+item.estado) || pl"> -->
+                <div class="width-100">
+                    <button class="btn mt-2 display-inline-flex" data-bs-toggle="modal" style="padding: 0 0.75rem;"
+                        (click)="orderTarget = (+item.orden + 1); programToSave = undefined;"
+                        data-bs-target="#programming-modal">
+                        <i class="fas fa-plus block"></i>
+                        <span class="ms-2">Añadir una pregunta</span>
+                    </button>
+                </div>
+                <!-- </ng-container> -->
+            </ng-container>
+        </div>
+    </ng-container>
+
+    <!-- Template descripción opción sin respuesta -->
+    <ng-template #description let-option="option">
+        <div class="position-relative pe-3" style="min-height: 1rem;">
+            <h6 class="page-title mt-2">
+                <i class="fas fa-hourglass-end cl-eleventh me-3" *ngIf="+option.estado === 0"></i>
+                <i class="fas fa-circle-notch cl-quinary me-3" *ngIf="+option.estado === 1"></i>
+                <i class="fas fa-check cl-septenary me-3" *ngIf="+option.estado === 2"></i>
+                <i class="fas fa-ban cl-danger me-3" *ngIf="+option.estado === 3"></i>
+                {{option.orden | letrasOrdenadas:1}}. {{option.titulo}}
+            </h6>
+            <!-- Archivos -->
+            <ng-container *ngIf="option.archivos.length">
+                <i class="far fa-file-pdf cursor-pointer dropdown-trigger position-absolute top-0 right-0 z-index-1"
+                    tabindex="0" [attr.data-target]="'file-dwn-' + option.id_programa"
+                    [appDropdownMaterialize]="'#page-content-reunion'"></i>
+
+                <!-- Dropdown Structure -->
+                <ul class='dropdown-content' [id]="'file-dwn-' + option.id_programa">
+                    <ng-container *ngFor="let archivo of option.archivos">
+                        <li>
+                            <a [href]="(storage + archivo.url) | safeUrl" download target="_blank">
+                                {{archivo.descripcion}}
+                            </a>
+                        </li>
+                    </ng-container>
+                </ul>
+            </ng-container>
+        </div>
+    </ng-template>
+
+    <!-- Template descripción opciones con respuesta -->
+    <ng-template #collapsableDescription let-option="option">
+        <div class="position-relative pe-3" style="min-height: 1rem;">
+            <!-- Cuerpo del plegable -->
+            <h6 class="page-title mt-2 primary-collapsable"
+                [collapsableAllowClick]="rol === 'Administrador' || +option.estado === 2"
+                [appCollapsable]="'#collapsable-content-' + (option.id_programa)"
+                [id]="'collapsable-of-' + (option.id_programa)">
+                <i class="fas fa-hourglass-end cl-eleventh me-3" *ngIf="+option.estado === 0"></i>
+                <i class="fas fa-circle-notch cl-quinary me-3" *ngIf="+option.estado === 1"></i>
+                <i class="fas fa-check cl-septenary me-3" *ngIf="+option.estado === 2"></i>
+                <i class="fas fa-ban cl-danger me-3" *ngIf="+option.estado === 3"></i>
+                {{option.orden | letrasOrdenadas:1}}. {{option.titulo}}
+            </h6>
+            <!-- Archivos -->
+            <ng-container *ngIf="option.archivos.length">
+                <i class="far fa-file-pdf cursor-pointer dropdown-trigger position-absolute top-0 right-0 z-index-1"
+                    tabindex="0" [attr.data-target]="'file-dwn-' + option.id_programa"
+                    [appDropdownMaterialize]="'#page-content-reunion'"></i>
+
+                <!-- Dropdown Structure -->
+                <ul class='dropdown-content' [id]="'file-dwn-' + option.id_programa">
+                    <ng-container *ngFor="let archivo of option.archivos">
+                        <li>
+                            <a [href]="(storage + archivo.url) | safeUrl" download target="_blank">
+                                {{archivo.descripcion}}
+                            </a>
+                        </li>
+                    </ng-container>
+                </ul>
+            </ng-container>
+        </div>
+    </ng-template>
+
+    <!-- Temmplate Sin respuesta -->
+    <ng-template #unanswered let-option="option">
+        <!-- <div class="mt-2" *ngIf="option.descripcion" style="white-space: pre-line;">
+            {{option.descripcion}}
+        </div> -->
+    </ng-template>
+
+    <!-- Template votación opciones -->
+    <ng-template #voteOption let-option="option">
+        <!-- <div class="mt-2" *ngIf="option.descripcion" style="white-space: pre-line;">
+            {{option.descripcion}}
+        </div> -->
+        <div [id]="'collapsable-content-' + (option.id_programa)" class="mt-2 primary-collapsable-content">
+            <ng-container *ngTemplateOutlet="vote; context: { option: option };">
+            </ng-container>
+        </div>
+    </ng-template>
+
+    <!-- Template opciones -->
+    <ng-template #vote let-option="option">
+        <!-- let-programming="programming" -->
+        <div class="ms-3 me-3 mt-2 mb-2">
+            <!-- Resutlados Admin -->
+            <ng-container *ngIf="rol === 'Administrador'">
+                <h6 class="page-title cl-tertiary">Resultados votación</h6>
+                <div class="display-flex align-items-center">
+                    <app-resultados-votacion [answerList]="answerList | arrayFilter:{ id_programa: option.id_programa }"
+                        [summonList]="allSummoned | arrayFilter:{ tipo: [0, 2, '0', '2'] }" [meet]="meet"
+                        style="display: contents;">
+                    </app-resultados-votacion>
+                </div>
+            </ng-container>
+            <!-- Resultados Convocado -->
+            <ng-container *ngIf="rol === 'Convocado'">
+                <!-- Sin responder -->
+                <ng-container *ngIf="[1, 2].includes(+option.estado) && !option.response && totalQuorum > 50">
+                    <h6 class="page-title cl-tertiary">Votar</h6>
+                    <button class="btn bg-secondary hoverable me-1 pt-3 pb-3 ps-5 pe-5 response-element"
+                        data-bs-toggle="modal" data-bs-target="#answer-question-modal"
+                        (click)="chooseInfo = { program: option, type: '1', response: { votacion: true } }">
+                        <i class="fas fa-check block cl-septenary mb-2" style="font-size: 2rem;"></i>
+                        <p class="m-0">Aprobar</p>
+                    </button>
+                    <button class="btn bg-secondary hoverable pt-3 pb-3 ps-5 pe-5 response-element"
+                        data-bs-toggle="modal" data-bs-target="#answer-question-modal"
+                        (click)="chooseInfo = { program: option, type: '1', response: { votacion: false } }">
+                        <i class="fas fa-ban block cl-danger mb-2" style="font-size: 2rem;"></i>
+                        <p class="m-0">Rechazar</p>
+                    </button>
+                </ng-container>
+                <ng-container *ngIf="[0, 1].includes(+option.estado) && !option.response && totalQuorum <= 50">
+                    <div style="min-height: 85.25px;">
+                        <p class="mt-0 mb-0 cl-primary bg-warning p-1 display-inline-block rounded-border">
+                            Esperando el quorum necesario
+                        </p>
+                    </div>
+                </ng-container>
+                <!-- Respuesta -->
+                <ng-container *ngIf="option.response">
+                    <h6 class="page-title cl-tertiary">Votación</h6>
+                    <button style="border-style: solid; border-width: 0.06rem;"
+                        [ngClass]="[option.response.votacion ? 'bcl-septenary' : 'bcl-danger']"
+                        class="btn bg-secondary pt-3 pb-3 ps-5 pe-5 blocked">
+                        <i [ngClass]="[option.response.votacion ? 'cl-septenary fa-check' : 'cl-danger fa-ban']"
+                            class="fas block mb-2" style="font-size: 2rem;"></i>
+                        <p class="m-0">{{option.response.votacion ? 'Aprobado' : 'Rechazado'}}</p>
+                    </button>
+                </ng-container>
+            </ng-container>
+        </div>
+    </ng-template>
+
+    <!-- Template cmapo de texto opciones -->
+    <ng-template #textAreaOption let-option="option">
+        <!-- <div class="mt-2" *ngIf="option.descripcion" style="white-space: pre-line;">
+            {{option.descripcion}}
+        </div> -->
+        <div [id]="'collapsable-content-' + (option.id_programa)" class="mt-2 primary-collapsable-content">
+            <ng-container *ngTemplateOutlet="textArea; context: { option: option };">
+            </ng-container>
+        </div>
+    </ng-template>
+
+    <!-- Template campo de texto -->
+    <ng-template #textArea let-option="option">
+        <div class="ms-3 me-3 mt-2 mb-2">
+            <!-- Convocado sin responder -->
+            <ng-container *ngIf="rol === 'Convocado' && [1, 2].includes(+option.estado) && !option.response">
+                <form>
+                    <textarea #textArea class="form-control shadowed mt-2" placeholder="Responder"></textarea>
+                    <button class="btn mt-2 response-element" type="submit" data-bs-toggle="modal"
+                        (click)="chooseInfo = { program: option, type: '4', response: { text: textArea.value } }"
+                        data-bs-target="#answer-question-modal" style="padding: 0.25rem 0.75rem;">Confirmar</button>
+                </form>
+            </ng-container>
+            <!-- Convocado que responde (Admin no ve estos resultados) -->
+            <div class="mt-2" *ngIf="rol === 'Convocado' && option.response">
+                {{option.response.text || ''}}
+            </div>
+            <div class="mt-2 cl-primary" *ngIf="rol === 'Administrador'">
+                <app-progreso-respuestas [answerList]="answerList | arrayFilter:{ id_programa: option.id_programa }"
+                    [summonList]="allSummoned | arrayFilter:{ tipo: [0, 2, '0', '2'] }" style="display: contents;">
+                </app-progreso-respuestas>
+            </div>
+        </div>
+    </ng-template>
+
+    <!-- Template opciones -->
+    <ng-template #election let-option="option">
+        <!-- let-programming="programming" -->
+        <div class="ms-3 me-3 mt-2 mb-2">
+            <!-- Resutlados Admin -->
+            <ng-container *ngIf="rol === 'Administrador'">
+                <app-resultado-seleccion [program]="option" [meet]="meet"
+                    [summonList]="allSummoned | arrayFilter:{ tipo: [0, 2, '0', '2'] }"
+                    [answerList]="answerList | arrayFilter:{ id_programa: option.id_programa }">
+                </app-resultado-seleccion>
+            </ng-container>
+            <!-- Resultados Convocado -->
+            <ng-container *ngIf="rol === 'Convocado'">
+                <!-- Sin responder -->
+                <ng-container *ngIf="[1, 2].includes(+option.estado) && !option.response">
+                    <!-- Selección única y elecciones -->
+                    <ng-container *ngIf="[2, 5].includes(+option.tipo)">
+                        <h6 class="page-title mt-2 mb-3">Opciones</h6>
+                        <app-seleccion-unica [opciones]="option.opciones" [program]="option"
+                            (response)="chooseInfo = { program: option, type: option.tipo, response: { seleccion: [$event] } }; openModal('#answer-question-modal')"
+                            [quorum]="totalQuorum > 50">
+                        </app-seleccion-unica>
+                    </ng-container>
+                    <!-- Selección múltiple y elecciones -->
+                    <ng-container *ngIf="+option.tipo === 3">
+                        <h6 class="page-title mt-2 mb-3">Opciones</h6>
+                        <app-seleccion-multipe [opciones]="option.opciones"
+                            (response)="chooseInfo = { program: option, type: option.tipo, response: { seleccion: $event } }; openModal('#answer-question-modal')">
+                        </app-seleccion-multipe>
+                    </ng-container>
+                </ng-container>
+                <!-- Respuesta -->
+                <ng-container *ngIf="option.response">
+                    <h6 class="page-title mt-2 mb-3">Seleccionado</h6>
+                    <ng-container
+                        *ngFor="let opt of option.opciones | arrayFilter:{ id_programa: option.response.seleccion }">
+                        <p class="mt-2">
+                            {{+option.tipo === 5 ? $any(opt).descripcion : $any(opt).titulo}}
+                        </p>
+                    </ng-container>
+                    <ng-container
+                        *ngIf="!(option.opciones | arrayFilter:{ id_programa: option.response.seleccion }).length">
+                        <p class="mt-2">Rechazar</p>
+                    </ng-container>
+                </ng-container>
+            </ng-container>
+        </div>
+    </ng-template>
+
+    <!-- Template votación opciones -->
+    <ng-template #electionOption let-option="option">
+        <!-- <div class="mt-2" *ngIf="option.descripcion" style="white-space: pre-line;">
+                {{option.descripcion}}
+            </div> -->
+        <div [id]="'collapsable-content-' + (option.id_programa)" class="mt-2 primary-collapsable-content">
+            <ng-container *ngTemplateOutlet="election; context: { option: option };">
+            </ng-container>
+        </div>
+    </ng-template>
+
+    <!-- Ventanas de díalogo convocados -->
+    <ng-container *ngIf="rol === 'Convocado'">
+        <!-- Modal responder -->
+        <div class="modal fade" id="answer-question-modal" tabindex="-1" aria-labelledby="answer-question-modal-label"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="answer-question-modal-label">Responder</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" style="padding: 1rem;">
+                        <p class="text-align-center margin-0">
+                            Esta acción no se puede deshacer. ¿Esta seguro de su respuesta?
+                        </p>
+                    </div>
+                    <div class="modal-footer border-top-none">
+                        <button class="btn outline-btn small-btn pt-tertiary" data-bs-dismiss="modal">Cancelar</button>
+                        <button class="btn filled-btn small-btn pt-septenary" data-bs-dismiss="modal"
+                            (click)="choose()">Confirmar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+    <!-- Ventanas de díalogo admin -->
+    <ng-container *ngIf="rol === 'Administrador'">
+        <!-- Modal avanzar -->
+        <div class="modal fade" id="advance-programming-modal" tabindex="-1"
+            aria-labelledby="advance-programming-modal-label" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="advance-programming-modal-label">Avanzar pregunta</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" style="padding: 1rem;">
+                        <p class="text-align-center margin-0">
+                            <ng-container [ngSwitch]="advanceText">
+                                <ng-container *ngSwitchCase="'Comenzar'">
+                                    ¿Esta seguro que desea comenzar la reunión?
+                                </ng-container>
+                                <ng-container *ngSwitchCase="'Finalizar'">
+                                    Esta acción dará por terminada la reunión y sacará a los convocados que no deban
+                                    firmar
+                                    acta. ¿Esta seguro que desea finalizar la reunión?.
+                                </ng-container>
+                                <ng-container *ngSwitchDefault>
+                                    Esta acción deshabilitará las acciones de los convocados sobre la pregunta actual y
+                                    habilitará las acciones en el siguiente. Esta acción no se puede deshacer
+                                    ¿Esta seguro de continuar?.
+                                </ng-container>
+                            </ng-container>
+                        </p>
+                    </div>
+                    <div class="modal-footer border-top-none">
+                        <button class="btn outline-btn small-btn pt-tertiary" data-bs-dismiss="modal">Cancelar</button>
+                        <button class="btn filled-btn small-btn pt-septenary" data-bs-dismiss="modal"
+                            (click)="advanceProgramming()">Confirmar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal cancelar reunión -->
+        <div class="modal fade" id="meet-cancel-modal" tabindex="-1" aria-labelledby="meet-cancel-modal-label"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="meet-cancel-modal-label">Cancelar reunión</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" style="padding: 1rem;">
+                        <p class="text-align-center margin-0">
+                            ¿Esta seguro que desea cancelar la reunión?
+                        </p>
+                    </div>
+                    <div class="modal-footer border-top-none">
+                        <button class="btn outline-btn small-btn pt-tertiary" data-bs-dismiss="modal">Cancelar</button>
+                        <button class="btn filled-btn small-btn pt-septenary" data-bs-dismiss="modal"
+                            (click)="meetCancel()">Confirmar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal cancelar programa -->
+        <div class="modal fade" id="program-cancel-confirm-modal" tabindex="-1"
+            aria-labelledby="program-cancel-confirm-modal-label" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="program-cancel-confirm-modal-label">Cancelar pregunta</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" style="padding: 1rem;">
+                        <p class="text-align-center margin-0">
+                            ¿Esta seguro que desea cancelar esta pregunta?
+                        </p>
+                    </div>
+                    <div class="modal-footer border-top-none">
+                        <button class="btn outline-btn small-btn pt-tertiary" data-bs-dismiss="modal">Cancelar</button>
+                        <button class="btn filled-btn small-btn pt-septenary" data-bs-dismiss="modal"
+                            (click)="programCancel()">Confirmar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- modal programación -->
+        <div class="modal fade" id="programming-modal" tabindex="-1" aria-labelledby="programming-modal-label"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="programming-modal-label">Editar orden del día</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body position-relative" style="padding: 1rem;">
+                        <ng-container *ngIf="adminUser">
+                            <app-estructura-programa [id_reunion]="adminUser.id_reunion" [orden]="orderTarget"
+                                [program]="programToSave" [meet]="meet" (eliminado)="programaEliminado = $event"
+                                [summonList]="allSummoned | arrayFilter:{ tipo: [0, 2, '0', '2'] }"
+                                (saved)="saveProgramming()">
+                            </app-estructura-programa>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- modal convocatoria -->
+        <ng-container *ngIf="meet">
+            <app-estructura-convocado [meet]="meet" (saved)="saveSummoned()"></app-estructura-convocado>
+        </ng-container>
+
+        <!-- Modal eliminar opcion -->
+        <div class="modal fade" id="programming-option-remove-modal" tabindex="-1"
+            aria-labelledby="programming-option-remove-modal-label" aria-hidden="true" data-bs-backdrop="static"
+            data-bs-keyboard="false">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="programming-option-remove-modal-label">Eliminar opción</h5>
+                    </div>
+                    <div class="modal-body" style="padding: 1rem;">
+                        <p class="text-align-center margin-0">
+                            ¿Seguro que desea eliminar esta opción?.
+                            <b>Esta acción no se puede deshacer</b>
+                        </p>
+                    </div>
+                    <div class="modal-footer border-top-none">
+                        <button class="btn outline-btn small-btn pt-tertiary" data-bs-dismiss="modal"
+                            (click)="recuperarPrograma()">Cancelar</button>
+                        <button class="btn filled-btn small-btn pt-septenary" data-bs-dismiss="modal"
+                            (click)="opcionEliminada()">Confirmar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="elect-modal" tabindex="-1" aria-labelledby="elect-modal-label" aria-hidden="true"
+            data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="elect-modal-label">Elegir convocado</h5>
+                    </div>
+                    <div class="modal-body" style="padding: 1rem;">
+                        <ng-container *ngIf="electItem">
+                            <p class="text-align-center margin-0 mb-2">
+                                La elección de <b>{{electItem.element.description}}</b> requiere definir un convocado,
+                                debido a un resultado empatado es necesario que especifique uno de los siguientes.
+                            </p>
+                            <ng-container *ngFor="let item of electItem.element.elected;">
+                                <button class="btn mb-3 summoned-btn mt-1 text-transform-capitalize nowrap-item w-100"
+                                    [ngClass]="{ 'selected': selectedElectItem === item.id_programa }"
+                                    (click)="selectedElectItem = item.id_programa;">
+                                    <span class="me-2">{{item.descripcion}}</span>
+                                </button>
+                            </ng-container>
+                            <!-- <button class="btn mb-3 cancel-election-btn mt-1 w-100" (click)="selectedElectItem = 0;"
+                                [ngClass]="{ 'selected': selectedElectItem === 0 }">
+                                <span class="me-2">Cancelar elección</span>
+                            </button> -->
+                        </ng-container>
+                    </div>
+                    <div class="modal-footer border-top-none">
+                        <button class="btn filled-btn small-btn pt-septenary"
+                            (click)="confirmElected()">Confirmar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+</section>
+<aside class="right-aside desktop-aside">
+
+    <div class="bg-denary rounded-border mb-3 position-relative ps-3 pe-3 pt-2 pb-2">
+        <div class="">
+            <p class="cl-quaternary mt-2 mb-2">Enlace</p>
+            <a class="meet-link" target="_blank"
+                href="https://teams.microsoft.com/l/meetup-join/19:6da4d5df043346e9968e273580df2ba4@thread.skype/1648589553260?context=%7B%22Tid%22:%22c7b0a7da-c3f3-42e5-a440-e8ef09655f46%22,%22Oid%22:%2243a35597-f2b6-44c1-956e-1f7c602f8194%22%7D">
+                https://teams.microsoft.com/...
+            </a>
+            <i class="far fa-copy" style="position: absolute; top: 0.4rem; right: 0.4rem; color: #9d9d9d;"></i>
+        </div>
+    </div>
+
+    <ng-container *ngIf="rol === 'Administrador'">
+        <button class="btn mb-3 cancel-btn" data-bs-toggle="modal" data-bs-target="#meet-cancel-modal">
+            <span class="me-2">Cancelar reunión</span>
+        </button>
+
+        <div class="mb-5 cl-quaternary" *ngIf="currentProgram && +currentProgram.tipo !== 0">
+            <app-progreso-respuestas
+                [answerList]="answerList | arrayFilter:{ id_programa: currentOption ? currentOption.id_programa : currentProgram.id_programa }"
+                [summonList]="allSummoned | arrayFilter:{ tipo: [0, 2, '0', '2'] }" style="display: contents;">
+            </app-progreso-respuestas>
+        </div>
+    </ng-container>
+
+    <div class="height-100 pretty-scrollbar overflow-auto">
+        <ng-container *ngFor="let item of summonList;">
+            <div class="card quinary-card hpt-denary bcl-denary-i mt-1">
+                <div class="card-body display-flex">
+                    <i class="fas fa-user block me-2" [ngClass]="[item.isLoggedin ? 'cl-septenary' : 'cl-tertiary']"
+                        *ngIf="true"></i>
+                    <i class="fas fa-user-friends block me-2" [ngClass]="['cl-tertiary']" *ngIf="false"></i>
+                    <span class="width-100 cl-quaternary nowrap-item text-transform-capitalize me-1"
+                        style="font-size: 0.9rem;" [title]="item.nombre" data-bs-toggle="tooltip">
+                        {{item.nombre}}
+                    </span>
+                    <ng-container *ngIf="rol === 'Administrador'">
+                        <i *ngIf="currentProgram && +currentProgram.tipo !== 0 && !item.response && +item.tipo !== 1 && item.isLoggedin"
+                            class="fas fa-hourglass-end cl-tertiary"></i>
+                        <i class="fas fa-ban cl-danger" *ngIf="item.response?.votacion === false"></i>
+                        <i class="fas fa-check cl-septenary" *ngIf="item.response?.votacion"></i>
+                        <ng-container *ngIf="item.response && item.response.votacion === undefined">
+                            <i class="far fa-comment-dots cl-quinary cursor-pointer dropdown-trigger" tabindex="0"
+                                [attr.data-target]="'response-dwn-' + item.id_convocado_reunion"
+                                [appDropdownMaterialize]="'#page-content-reunion'"></i>
+
+                            <!-- Dropdown Structure -->
+                            <ul class='dropdown-content' [id]="'response-dwn-' + item.id_convocado_reunion">
+                                <ng-container *ngIf="item.response.text">
+                                    <li>{{item.response.text}}</li>
+                                </ng-container>
+                                <ng-container *ngIf="item.response.seleccion">
+                                    <ng-container
+                                        *ngIf="currentProgram && [2,3,5].includes(+currentProgram.tipo); else noCP">
+                                        <li
+                                            *ngFor="let opcion of (currentProgram?.opciones || []) | arrayFilter:{ id_programa: item.response.seleccion }">
+                                            {{+$any(currentProgram).tipo === 5 ? opcion.descripcion : opcion.titulo}}
+                                        </li>
+                                        <li
+                                            *ngIf="!((currentProgram?.opciones || []) | arrayFilter:{ id_programa: item.response.seleccion }).length">
+                                            Rechazar
+                                        </li>
+                                    </ng-container>
+                                    <ng-template #noCP>
+                                        <ng-container
+                                            *ngIf="currentOption && [2,3,5].includes(+currentOption.tipo); else noCP">
+                                            <li
+                                                *ngFor="let opcion of (currentOption?.opciones || []) | arrayFilter:{ id_programa: item.response.seleccion }">
+                                                {{+$any(currentOption).tipo === 5 ? opcion.descripcion :
+                                                opcion.titulo}}
+                                            </li>
+                                            <li
+                                                *ngIf="!((currentOption?.opciones || []) | arrayFilter:{ id_programa: item.response.seleccion }).length">
+                                                Rechazar
+                                            </li>
+                                        </ng-container>
+                                    </ng-template>
+
+                                </ng-container>
+                            </ul>
+                        </ng-container>
+                    </ng-container>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+    <button class="btn mt-3 summon-add-btn" data-bs-toggle="modal" data-bs-target="#summoned-modal"
+        *ngIf="rol === 'Administrador'">
+        <span class="me-2">Convocar</span>
+        <i class="fas fa-user-plus block" style="font-size: 1.5rem;"></i>
+    </button>
+
+    <ng-container *ngIf="meet && +meet.quorum">
+        <div class="mt-2">
+            <div class="display-flex">
+                <h6 class="cl-quaternary">Quorum</h6>
+                <h6 class="width-100 cl-quaternary text-align-right">{{totalQuorum | toFixed:2}}%</h6>
+            </div>
+            <div class="progress pt-septenary bg-denary" style="border-radius: 1rem;">
+                <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                    [ngStyle]="{ 'width': totalQuorum + '%' }" [attr.aria-valuenow]="totalQuorum"
+                    style="border-radius: 1rem;">
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+    <button class="btn mt-3 next-btn" data-bs-toggle="modal" data-bs-target="#advance-programming-modal"
+        *ngIf="rol === 'Administrador' && totalQuorum > 50;">
+        <span class="me-2">{{advanceText}}</span>
+        <i class="fas fa-forward block" style="font-size: 1.5rem;"></i>
+    </button>
+
+</aside>
+
+<aside class="right-aside mobile-aside">
+    <ng-container *ngIf="rol === 'Administrador'">
+        <button class="btn mb-3 cancel-btn" data-bs-toggle="modal" data-bs-target="#meet-cancel-modal">
+            <i class="fas fa-ban"></i>
+        </button>
+        <div class="mb-2 cl-quaternary" *ngIf="currentProgram && +currentProgram.tipo !== 0">
+            <app-progreso-respuestas
+                [answerList]="answerList | arrayFilter:{ id_programa: currentOption ? currentOption.id_programa : currentProgram.id_programa }"
+                [summonList]="allSummoned | arrayFilter:{ tipo: [0, 2, '0', '2'] }" style="display: contents;">
+            </app-progreso-respuestas>
+        </div>
+    </ng-container>
+
+    <div class="h-100 mb-3">
+        <button class="btn summon-add-btn w-100 position-relative dropdown-trigger"
+            [appDropdownMaterialize]="'#page-content-reunion'" tabindex="0" data-target="summoned-list-2">
+            <i class="fas fa-user block" style="font-size: 1.5rem;"></i>
+            <span class="bg-septenary user-badge line-height-1">
+                {{(summonList | arrayFilter:{ isLoggedin: true }).length}}
+            </span>
+        </button>
+        <div class="dropdown-content bg-primary" id="summoned-list-2">
+            <div class="height-100 dark-pretty-scrollbar p-2 overflow-auto">
+                <ng-container *ngFor="let item of summonList;">
+                    <div class="card quinary-card hpt-denary bcl-denary-i mt-1">
+                        <div class="card-body display-flex">
+                            <i class="fas fa-user block me-2"
+                                [ngClass]="[item.isLoggedin ? 'cl-septenary' : 'cl-tertiary']" *ngIf="true"></i>
+                            <i class="fas fa-user-friends block me-2" [ngClass]="['cl-tertiary']" *ngIf="false"></i>
+                            <span class="width-100 cl-quaternary nowrap-item text-transform-capitalize me-1"
+                                style="font-size: 0.9rem;" [title]="item.nombre" data-bs-toggle="tooltip">
+                                {{item.nombre}}
+                            </span>
+                            <ng-container *ngIf="rol === 'Administrador'">
+                                <i *ngIf="currentProgram && +currentProgram.tipo !== 0 && !item.response && +item.tipo !== 1 && item.isLoggedin"
+                                    class="fas fa-hourglass-end cl-tertiary"></i>
+                                <i class="fas fa-ban cl-danger" *ngIf="item.response?.votacion === false"></i>
+                                <i class="fas fa-check cl-septenary" *ngIf="item.response?.votacion"></i>
+                                <ng-container *ngIf="item.response && item.response.votacion === undefined">
+                                    <i class="far fa-comment-dots cl-quinary cursor-pointer dropdown-trigger"
+                                        tabindex="0"
+                                        [attr.data-target]="'response-dwn-' + item.id_convocado_reunion + '-2'"
+                                        [appDropdownMaterialize]="'#page-content-reunion'"></i>
+
+                                    <!-- Dropdown Structure -->
+                                    <ul class='dropdown-content'
+                                        [id]="'response-dwn-' + item.id_convocado_reunion + '-2'">
+                                        <ng-container *ngIf="item.response.text">
+                                            <li>{{item.response.text}}</li>
+                                        </ng-container>
+                                        <ng-container *ngIf="item.response.seleccion">
+                                            <ng-container
+                                                *ngIf="currentProgram && [2,3,5].includes(+currentProgram.tipo); else noCP">
+                                                <li
+                                                    *ngFor="let opcion of (currentProgram?.opciones || []) | arrayFilter:{ id_programa: item.response.seleccion }">
+                                                    {{+$any(currentProgram).tipo === 5 ? opcion.descripcion :
+                                                    opcion.titulo}}
+                                                </li>
+                                                <li
+                                                    *ngIf="!((currentProgram?.opciones || []) | arrayFilter:{ id_programa: item.response.seleccion }).length">
+                                                    Rechazar
+                                                </li>
+                                            </ng-container>
+                                            <ng-template #noCP>
+                                                <ng-container
+                                                    *ngIf="currentOption && [2,3,5].includes(+currentOption.tipo); else noCP">
+                                                    <li
+                                                        *ngFor="let opcion of (currentOption?.opciones || []) | arrayFilter:{ id_programa: item.response.seleccion }">
+                                                        {{+$any(currentOption).tipo === 5 ? opcion.descripcion :
+                                                        opcion.titulo}}
+                                                    </li>
+                                                    <li
+                                                        *ngIf="!((currentOption?.opciones || []) | arrayFilter:{ id_programa: item.response.seleccion }).length">
+                                                        Rechazar
+                                                    </li>
+                                                </ng-container>
+                                            </ng-template>
+
+                                        </ng-container>
+                                    </ul>
+                                </ng-container>
+                            </ng-container>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+
+
+    <button class="btn mt-3 summon-add-btn" data-bs-toggle="modal" data-bs-target="#summoned-modal"
+        *ngIf="rol === 'Administrador'">
+        <i class="fas fa-user-plus block" style="font-size: 1.5rem;"></i>
+    </button>
+
+    <ng-container *ngIf="meet && +meet.quorum">
+        <div class="mt-2">
+            <div class="display-flex flex-direction-column text-align-center">
+                <p class="cl-quaternary m-0">Quorum</p>
+                <h6 class="width-100 cl-quaternary">{{totalQuorum | toFixed:2}}%</h6>
+            </div>
+            <div class="progress pt-septenary bg-denary" style="border-radius: 1rem;">
+                <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                    [ngStyle]="{ 'width': totalQuorum + '%' }" [attr.aria-valuenow]="totalQuorum"
+                    style="border-radius: 1rem;">
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+    <button class="btn mt-3 next-btn" data-bs-toggle="modal" data-bs-target="#advance-programming-modal"
+        *ngIf="rol === 'Administrador' && totalQuorum > 50;">
+        <i class="fas fa-forward block" style="font-size: 1.5rem;"></i>
+    </button>
+
+</aside>

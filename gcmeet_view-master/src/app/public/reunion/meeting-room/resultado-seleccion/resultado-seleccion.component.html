@@ -1,0 +1,74 @@
+<table *ngIf="program">
+    <ng-container *ngFor="let opcion of program.opciones">
+        <tr>
+            <td class="full-td p-2">
+                <b>{{ +program.tipo === 5 ? opcion.descripcion : opcion.titulo}}</b>
+            </td>
+            <td class="p-2" style="width: 15vw;">
+                <div class="progress pt-primary" style="border-radius: 1rem;">
+                    <div class="progress-bar" role="progressbar" aria-valuemin="0"
+                        [ngStyle]="{ 'width': (total ? (answers[opcion.id_programa] ? ((answers[opcion.id_programa].percentage * 100) | toFixed:2) : 0) : 0) + '%' }"
+                        [attr.aria-valuenow]="(total ? (answers[opcion.id_programa] ? ((answers[opcion.id_programa].percentage * 100) | toFixed:2) : 0) : 0)"
+                        style="border-radius: 1rem;" aria-valuemax="100">
+                    </div>
+                </div>
+            </td>
+            <td class="full-td p-2">
+                <b>
+                    {{(answers[opcion.id_programa] ? (answers[opcion.id_programa].percentage * 100) : 0).toFixed(2)}}%
+                </b>
+            </td>
+            <td class="full-td p-2">
+                <ng-container *ngIf="opcion.archivos?.length">
+                    <i class="far fa-file-pdf cursor-pointer dropdown-trigger"
+                        [attr.data-target]="'file-dwn-' + opcion.id_programa"
+                        [appDropdownMaterialize]="'#page-content-reunion'" tabindex="0"></i>
+
+                    <!-- Dropdown Structure -->
+                    <ul class='dropdown-content' [id]="'file-dwn-' + opcion.id_programa">
+                        <ng-container *ngFor="let archivo of opcion.archivos">
+                            <li>
+                                <a [href]="(storage + archivo.url) | safeUrl" download target="_blank">
+                                    {{archivo.descripcion}}
+                                </a>
+                            </li>
+                        </ng-container>
+                    </ul>
+                </ng-container>
+            </td>
+        </tr>
+    </ng-container>
+    <tr>
+        <td class="full-td p-2"><b>Rechazar</b></td>
+        <td class="p-2" style="width: 15vw;">
+            <div class="progress pt-primary" style="border-radius: 1rem;">
+                <div class="progress-bar" role="progressbar" aria-valuemin="0"
+                    [ngStyle]="{ 'width': (total ? (answers[0] ? ((answers[0].percentage * 100) | toFixed:2) : 0) : 0) + '%' }"
+                    [attr.aria-valuenow]="(total ? (answers[0] ? ((answers[0].percentage * 100) | toFixed:2) : 0) : 0)"
+                    style="border-radius: 1rem;" aria-valuemax="100">
+                </div>
+            </div>
+        </td>
+        <td class="full-td p-2">
+            <b>{{(answers[0] ? (answers[0].percentage * 100) :
+                0).toFixed(2)}}%</b>
+        </td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="full-td p-2"><b>Sin respuesta</b></td>
+        <td class="p-2" style="width: 15vw;">
+            <div class="progress pt-primary" style="border-radius: 1rem;">
+                <div class="progress-bar" role="progressbar" aria-valuemin="0"
+                    [ngStyle]="{ 'width': (total ? (noResponse ? ((noResponse.percentage * 100) | toFixed:2) : 0) : 0) + '%' }"
+                    [attr.aria-valuenow]="(total ? (noResponse ? ((noResponse.percentage * 100) | toFixed:2) : 0) : 0)"
+                    style="border-radius: 1rem;" aria-valuemax="100">
+                </div>
+            </div>
+        </td>
+        <td class="full-td p-2">
+            <b>{{(noResponse ? (noResponse.percentage * 100) : 0).toFixed(2)}}%</b>
+        </td>
+        <td></td>
+    </tr>
+</table>

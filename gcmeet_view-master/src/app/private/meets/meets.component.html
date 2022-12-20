@@ -1,0 +1,582 @@
+<div class="page-content pretty-scrollbard display-flex flex-direction-column">
+  <section>
+    <h6 class="page-title text-style margin-bottom-0">Gestionar reuniones</h6>
+    <div class="row flex-row">
+
+      <!-- si no hay grupos registrados -->
+      <ng-container *ngIf="grupos.length === 0">
+        <div class="col-sm-12 col-lg-4 margin-top-100rem">
+          <a class="card quaternary-card dark-bg-inty-1 over-dark-bg-inty-2 group-card" style="height: 8rem;">
+            <div class="card-body align-items-center justify-content-center">
+              <span class="black-color font-weight-700"> No se tienen grupos registrados </span>
+            </div>
+          </a>
+        </div>
+      </ng-container>
+
+      <!-- ngFor -->
+      <ng-container *ngFor="let grupo of grupos; let i = index">
+        <div class="col-sm-12 col-lg-3 margin-top-100rem">
+          <a [routerLink]="['/private/meet-management/registrar/' + grupo.id_grupo]"
+            class="card quaternary-card dark-bg-inty-1 over-dark-bg-inty-2 group-card"
+            [ngStyle]="{ 'background-image': 'url(' + grupo.imagen + ')' }" style="height: 8rem;">
+            <div class="card-body align-items-center justify-content-center">
+              <span class="white-color font-weight-700">{{ grupo.descripcion }}</span>
+            </div>
+          </a>
+        </div>
+      </ng-container>
+      <!-- /ngFor -->
+
+    </div>
+  </section>
+  <section class="display-flex h-100 flex-direction-column">
+    <h6 class="text-style mb-3 mt-5">Lista de reuniones</h6>
+    <div class="row h-100">
+      <!-- Recuadro con el listado de reuniones por grupo -->
+      <div class="col-sm-12 col-lg-5 position-relative">
+        <div class="height-100 width-100 position-absolute pretty-scrollbar overflow-auto col-padding"
+          style="top: 0; left: 0;">
+
+          <!-- si no hay grupos registrados -->
+          <ng-container *ngIf="grupos.length === 0">
+            <div class="mt-2 pt-senary">
+              <p class="page-title margin-bottom-0"> No se tiene registro de grupos anteriores </p>
+            </div>
+          </ng-container>
+          <!-- /si no hay grupos registrados -->
+
+          <!-- ngFor -->
+          <ng-container *ngFor="let grupo of grupos; let i = index; let f = first;">
+
+            <div class="primary-collapsable-card shadowed" [ngClass]="{ 'mt-1': !f }">
+              <!-- collapsable-trigger -->
+              <div class="primary-collapsable-header">
+                <span style="font-size: 0.76rem;">{{ grupo.descripcion }}</span>
+                <button #collapsable class="btn primary-collapsable" [appCollapsable]="'#collapsable-content' + i"
+                  [collapsableAllowClick]="false" (click)="getReuniones(collapsable, grupo.id_grupo)">
+                  <i class="fas block collapsable-icon" collapsable-content="&#xf078;"
+                    collapsable-activated-content="&#xf077;"></i>
+                </button>
+              </div>
+              <!-- /collapsable-trigger -->
+              <!-- collapsable-content -->
+              <div class="primary-collapsable-content" [id]="'collapsable-content' + i">
+                <div class="primary-collapsable-body">
+                  <!-- ngFor -->
+                  <div class="primary-collapsable" *ngIf="(reuniones[grupo.id_grupo] || []).length == 0"> <small> No hay
+                      reuniones asociadas a este grupo </small> </div>
+
+                  <ng-container *ngFor="let reunion of reuniones[grupo.id_grupo] || []; let i = index">
+
+                    <div meet-status="3" class="mt-2 meet-list-item"
+                      [ngClass]="{'pt-quinary': reunion.estado === '0', 'pt-success': reunion.estado === '1', 'pt-senary': reunion.estado === '2','pt-danger': reunion.estado === '3'}"
+                      (click)="getReunion(reunion.id_reunion)">
+                      <div
+                        class="display-flex width-100 justify-content-space-between align-items-center mt-2 mb-2 position-relative z-index-2">
+                        <p class="margin-bottom-0 font-weight-700">{{reunion.titulo}}</p>
+                        <!-- Icono campana de alerta-->
+                        <i *ngIf="(reunion.estado == '0' || reunion.estado == '1') &&  reunion.validacion && reunion.validacion.length > 0"
+                          style="color: #F93245;" title="Aun no se le ha enviado la invitación a todos los convocados"
+                          class="fas fa-bell"></i>
+                      </div>
+                      <div
+                        class="display-flex width-100 justify-content-space-between align-items-center mt-2 mb-2 position-relative z-index-2">
+                        <span class="primary-badge"><span>{{ reunion.estado === '0' ? 'En espera' : (reunion.estado ===
+                            '1' ? 'En curso' : (reunion.estado === '2' ? 'Terminada' : 'Cancelada'))}}</span></span>
+                        <p class="margin-0 font-weight-700">{{ reunion.fecha_reunion }} - {{ reunion.hora }}</p>
+                      </div>
+                    </div>
+                  </ng-container>
+                  <!-- /ngFor -->
+                </div>
+              </div>
+              <!-- /collapsable-content -->
+            </div>
+          </ng-container>
+          <!-- /ngFor -->
+        </div>
+      </div>
+
+      <!-- Recuadro con el detalle de una reunión seleccionada -->
+      <div class="col-sm-12 col-lg-7">
+        <div class="height-100 white-background rounded-border bordered shadowed"
+          style="min-height: 25rem; padding: 1.25rem;">
+          <!-- si selecciona reunión -->
+          <ng-container *ngIf="reunion; else noReunion">
+            <div class="display-flex flex-direction-column height-100">
+              <div class="display-flex">
+                <h6 class="text-style margin-bottom-0" style="flex: 1 1 auto;">Detalles de reunión</h6>
+                <button class="btn fas fa-ellipsis-h block" data-bs-toggle="dropdown"
+                  *ngIf="reunion.estado === '0' || reunion.estado === '3'">
+                </button>
+                <ul class="dropdown-menu primary-list meet-options">
+                  <li *ngIf="reunion.estado === '0'">
+                    <a [routerLink]="['/private/meet-management/modificar/', reunion?.id_reunion]" class="width-100">
+                      <i class="fas fa-pencil-alt me-2" style="font-size: 0.66rem;"></i>
+                      <span>Editar</span>
+                    </a>
+                  </li>
+                  <li *ngIf="reunion.estado === '0'">
+                    <a class="width-100" data-bs-toggle="modal" data-bs-target="#meet-cancel-modal">
+                      <i class="fas fa-ban me-2" style="font-size: 0.66rem;"></i>
+                      <span>Cancelar</span>
+                    </a>
+                  </li>
+                  <li *ngIf="reunion.estado === '0' || reunion.estado === '3'">
+                    <a class="width-100" data-bs-toggle="modal" data-bs-target="#meet-remove-modal">
+                      <i class="fas fa-trash me-2" style="font-size: 0.66rem; width: 0.66rem;"></i>
+                      <span>Eliminar</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <div class="mt-3 row">
+                <div class="col-sm-12 col-lg-5">
+                  <div
+                    class="height-100 display-flex align-items-center justify-content-center bgc-octonary rounded-border"
+                    style="padding: 12.5%;">
+                    <img [src]="reunion.logo" class="width-100">
+                  </div>
+                </div>
+                <div class="col-sm-12 col-lg-7" style="padding-left: 0;">
+                  <div class="height-100">
+                    <h6 class="text-style">{{ reunion?.titulo }}</h6>
+                    <div class="primary-badge display-inline-block"
+                      [ngClass]="{'pt-quinary': reunion.estado === '0', 'pt-success': reunion.estado === '1', 'pt-senary': reunion.estado === '2','pt-danger': reunion.estado === '3'}">
+                      <span>{{ reunion.estado === '0' ? 'En espera' : (reunion.estado === '1' ? 'En curso' :
+                        (reunion.estado === '2' ? 'Terminada' : 'Cancelada'))}}</span>
+                    </div>
+                    <div class="row">
+                      <div class="col-6 mt-3">
+                        <p class="page-title margin-bottom-0">Fecha</p>
+                        <p class="margin-bottom-0">{{ reunion?.fecha_reunion }}</p>
+                      </div>
+                      <div class="col-6 mt-3">
+                        <p class="page-title margin-bottom-0">Hora</p>
+                        <p class="margin-bottom-0">{{ reunion?.hora }}</p>
+                      </div>
+                      <div class="col-12 mt-3">
+                        <div class="display-flex align-items-center">
+                          <button class="btn sm-round-btn me-2 pt-quinary" data-bs-toggle="modal"
+                            data-bs-target="#summon-list-modal" title="Convocados de la reunión">
+                            <i style="font-size: 0.75rem; height: 1rem; line-height: 1rem;"
+                              class="fas fa-users block"></i>
+                          </button>
+                          <button class="btn sm-round-btn me-2 pt-quinary" data-bs-toggle="modal"
+                            data-bs-target="#programming-list-modal" title="Orden del día de la reunión">
+                            <i class="fas fa-list-alt block"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <p class="page-title mt-3 margin-bottom-0">Descripción</p>
+              <p class="mt-3 height-100">
+                {{ reunion?.descripcion }}
+              </p>
+              <div class="display-inline-grid"
+                style="grid-auto-flow: column; grid-auto-columns: 1fr; width: fit-content;">
+
+                <button *ngIf="reunion.estado === '0' || reunion.estado === '1'"
+                  [disabled]="reunion.programacion === ''" class="btn send-invitation-btn me-2 text-align-left"
+                  data-bs-toggle="modal" data-bs-target="#send-invitation-modal">
+                  <i class="fas fa-paper-plane me-1 pt-primary"></i>
+                  <b>Enviar invitación</b>
+                </button>
+
+                <button data-bs-toggle="modal" data-bs-target="#start-confirm-modal" *ngIf="reunion.estado === '0'"
+                  class="btn filled-btn pt-primary text-align-left">
+                  <i class="fas fa-play me-1"></i>
+                  <b>Preparar</b>
+                </button>
+
+                <a *ngIf="reunion.estado === '1'" class="btn filled-btn pt-primary text-align-left"
+                  [routerLink]="'/public/reunion/meeting-room/' + reunion.token" target="_blank">
+                  <i class="fas fa-play me-1"></i>
+                  <b>Ingresar</b>
+                </a>
+
+                <button class="btn filled-btn me-2 text-align-left pt-primary" data-bs-toggle="modal"
+                  data-bs-target="#reschedule-modal" *ngIf="reunion.estado === '3'" (click)="datosReprogramarReunion()">
+                  <i class="far fa-calendar me-1"></i>
+                  <b>Reprogramar</b>
+                </button>
+
+                <!-- (click)="downloadPDFDocument()"  -->
+                <ng-container *ngIf="reunion.estado === '2' && reunion.id_acta && !reunion.acta">
+                  <a target="_blank" class="btn filled-btn pt-primary text-align-left"
+                    [routerLink]="'/public/reunion/actas/' + reunion.plantilla + '/' + reunion.token"
+                    style="margin-right: 10px;">
+                    <i style=" padding-right: 0.3rem;" class="far fa-file-alt me-1"></i>
+                    <b style="padding-right: 3rem;">Ver acta</b>
+                  </a>
+                </ng-container>
+
+                <ng-container *ngIf="reunion.estado === '2' && reunion.id_acta && reunion.acta">
+                  <a target="_blank" class="btn filled-btn pt-primary text-align-left"
+                    [href]="(storage + reunion.acta) | safeUrl" download style="margin-right: 10px;">
+                    <i style=" padding-right: 0.3rem;" class="far fa-file-alt me-1"></i>
+                    <b style="padding-right: 3rem;">Ver acta</b>
+                  </a>
+                </ng-container>
+
+                <div *ngIf="reunion.estado === '2'" class="btn dropdown dropup filled-btn pt-primary text-align-left"
+                  style="margin: 0; padding: 0;">
+                  <p style="font-size: 0.8125rem; font-weight: bold; padding: 0.3125rem 0.8125rem;"
+                    class="margin-0 pt-1 cursor-pointer" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="far fa-folder-open" style="margin-right: 10px;"></i> {{archivos.length}} Archivos
+                  </p>
+                  <ul class="dropdown-menu primary-list dwn-file-list">
+                    <ng-container *ngFor="let archivo of archivos; let i = index">
+                      <li style="width: 100%; padding-left: 0.5rem; padding-top: 0.5rem; padding-bottom: 0.5rem;">
+                        <i class="far fa-file cl-primary me-2"></i>
+                        <a target="_blank" [href]="domSanitizer.bypassSecurityTrustResourceUrl(storage + archivo.url)"
+                          [download]="archivo.descripcion" class="me-3">
+                          {{archivo.descripcion}}
+                        </a>
+                      </li>
+                    </ng-container>
+                    <ng-container *ngIf="archivos.length === 0">
+                      <li>
+                        <span>No se han cargado archivos</span>
+                      </li>
+                    </ng-container>
+                  </ul>
+                </div>
+
+              </div>
+            </div>
+          </ng-container>
+          <!-- /si selecciona reunión -->
+          <!-- si no selecciona reunión -->
+          <ng-template #noReunion>
+            <div
+              class="width-100 height-100 display-flex align-items-center justify-content-center flex-direction-column">
+              <img src="assets/img/meets/empty-list.png" class="width-10">
+              <p class="font-weight-700 mt-3">
+                Seleccione una reunión para ver su información
+              </p>
+            </div>
+          </ng-template>
+          <!-- /si no selecciona reunión -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal cancelar reunión -->
+  <div class="modal fade" id="meet-cancel-modal" tabindex="-1" aria-labelledby="meet-cancel-modal-label"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="meet-cancel-modal-label">Cancelar reunión</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding: 1rem;">
+          <p class="text-align-center margin-0">
+            ¿Seguro que desea cancelar esta reunión?.
+          </p>
+        </div>
+        <div class="modal-footer border-top-none">
+          <button class="btn outline-btn small-btn pt-tertiary" data-bs-dismiss="modal">Cancelar</button>
+          <button class="btn filled-btn small-btn pt-septenary" data-bs-dismiss="modal"
+            (click)="cancelarReunion()">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal eliminar reunión -->
+  <div class="modal fade" id="meet-remove-modal" tabindex="-1" aria-labelledby="meet-remove-modal-label"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="meet-remove-modal-label">Eliminar reunión</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding: 1rem;">
+          <p class="text-align-center margin-0">
+            ¿Seguro que desea eliminar esta reunión?.
+            <b>Esta acción no se puede deshacer</b>
+          </p>
+        </div>
+        <div class="modal-footer border-top-none">
+          <button class="btn outline-btn small-btn pt-tertiary" data-bs-dismiss="modal">Cancelar</button>
+          <button class="btn filled-btn small-btn pt-septenary" data-bs-dismiss="modal"
+            (click)="eliminarReunion()">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal convocados -->
+  <div class="modal fade" id="summon-list-modal" tabindex="-1" aria-labelledby="summon-list-modal-label"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body pretty-scrollbar" style="padding: 1rem;">
+          <button type="button" class="btn-close position-absolute" data-bs-dismiss="modal" aria-label="Close"
+            style="right: 1rem; top: 1rem;"></button>
+          <!-- Convocados -->
+          <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#competitor-tab"
+                type="button" role="tab" aria-controls="competitor-tab" aria-selected="true">Participantes
+                ({{arrayConvocadosA.length}})</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#invited-tab" type="button"
+                role="tab" aria-controls="invited-tab" aria-selected="false">Invitados
+                ({{arrayConvocadosI.length}})</button>
+            </li>
+          </ul>
+          <!-- Contenido tabs -->
+          <div class="tab-content">
+            <div class="padding-horizontal-50rem tab-pane fade show active" id="competitor-tab" role="tabpanel"
+              aria-labelledby="competitor-tab">
+              <!-- Convocados -->
+              <ul class="width-100 primary-list mt-2 summon-list-preview">
+                <li *ngIf="arrayConvocadosA.length === 0">No hay convocados</li>
+                <ng-container *ngFor="let convocado of (arrayConvocadosA | sortSummon); let i = index">
+                  <li>
+                    <div class="width-100">{{ convocado.razon_social || convocado.nombre || '' }}</div>
+                    <div *ngIf="convocado.razon_social"><small>{{ convocado.nombre }}</small></div>
+                  </li>
+                </ng-container>
+              </ul>
+            </div>
+            <div class="padding-horizontal-50rem tab-pane fade" id="invited-tab" role="tabpanel"
+              aria-labelledby="invited-tab">
+              <!-- Invitados -->
+              <ul class="width-100 primary-list mt-2 summon-list-preview">
+                <li *ngIf="arrayConvocadosI.length === 0">No hay invitados</li>
+                <ng-container *ngFor="let convocado of (arrayConvocadosI | sortSummon); let i = index">
+                  <li>
+                    <div>{{ convocado.nombre }}</div>
+                  </li>
+                </ng-container>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal programación -->
+  <div class="modal fade" id="programming-list-modal" tabindex="-1" aria-labelledby="programming-list-modal-label"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="programming-list-modal-label">Orden del día</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body pretty-scrollbar" style="padding: 0.5rem 1.5rem;">
+          <ul class="primary-list programming-list">
+            <li *ngIf="programas.length === 0">
+              <div class="width-100 text-align-center">No se ha establecido un orden del día</div>
+            </li>
+            <!-- ngFor -->
+            <ng-container *ngIf="programas.length > 0">
+              <ng-container *ngFor="let programa of programas; let i = index">
+                <!-- ngStyle -->
+                <li [style]="programa.opciones!.length > 0 ? 'padding-bottom: 0;' : ''">
+                  {{programa.orden}}. {{ programa.titulo }}
+                  <!-- ngIf (si tiene opciones) -->
+                  <ng-container *ngIf="programa.opciones!.length > 0">
+                    <ul class="primary-list">
+                      <!-- ngFor -->
+                      <ng-container *ngFor="let opcion of programa.opciones; let i = index">
+                        <li>{{(+opcion.orden - 1) | letrasOrdenadas}}. {{ +programa.tipo === 5 ? opcion.descripcion :
+                          opcion.titulo }}</li>
+                      </ng-container>
+                      <!-- /ngFor -->
+                    </ul>
+                  </ng-container>
+                  <!-- /ngIf -->
+                </li>
+              </ng-container>
+            </ng-container>
+            <!-- /ngFor -->
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal invitaciones -->
+  <div class="modal fade" id="send-invitation-modal" tabindex="-1" aria-labelledby="send-invitation-modal-label"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <form class="modal-content" method="post"
+        (submit)="checkInvitations($event, '#invitation-confirm-modal', '#send-invitation-modal')">
+        <div class="modal-header">
+          <h5 class="modal-title" id="programming-list-modal-label">Convocatoria</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body pretty-scrollbar modal-with-footer" style="padding: 1rem;">
+          <ul class="width-100 primary-list summon-list">
+            <!-- ngIf -->
+            <li *ngIf="convocados.length === 0">
+              <div class="width-100">No se han convocado participantes</div>
+            </li>
+            <!-- /ngIf -->
+            <!-- ngFor -->
+            <ng-container *ngIf="convocados.length > 0">
+              <li class="bg-secondary">
+                <input name="correo_convocados" class="form-check-input" type="checkbox"
+                  (change)="toggleSummonList($event)">
+                <div class="width-100">Enviar a todos</div>
+              </li>
+              <ng-container *ngFor="let convocado of convocados; let i = index">
+                <li>
+                  <input type="checkbox" [appCheckInput]="convocado.fecha_envio_invitacion === null"
+                    class="form-check-input" value="{{convocado.id_convocado_reunion}}" name="correo_convocado"
+                    (change)="toggleSummon($event)">
+                  <div class="width-100">
+                    <div>{{convocado.nombre}}</div>
+                    <span *ngIf="convocado.fecha_envio_invitacion && convocado.fecha_envio_invitacion != null"
+                      style="color: #888888; font-size: 10px;">Convocado el :
+                      {{convocado.fecha_envio_invitacion}}</span>
+                  </div>
+                  <input (change)="validateInput($event)" class="form-control small-input" type="email"
+                    [attr.data-convocado]="convocado.id_convocado_reunion" value="{{ convocado.correo }}" disabled>
+                </li>
+              </ng-container>
+            </ng-container>
+            <!-- /ngFor -->
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button class="btn width-100" type="submit">
+            <i class="fas fa-paper-plane me-1"></i>
+            <span>Enviar invitación</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!-- Confirmar invitaciones -->
+  <div class="modal fade" id="invitation-confirm-modal" tabindex="-1" aria-labelledby="invitation-confirm-modal-label"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="invitation-confirm-modal-label">Reenviar invitaciones</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding: 1rem;">
+          <p class="text-align-center margin-0">
+            Se enviará un correo de invitación a todos los convocados seleccionados.
+          </p>
+          <p class="text-align-center mt-2 margin-bottom-0">¿Desea continuar?</p>
+        </div>
+        <div class="modal-footer border-top-none">
+          <button class="btn outline-btn small-btn pt-tertiary" data-bs-dismiss="modal">Cancelar</button>
+          <button class="btn filled-btn small-btn pt-septenary" data-bs-dismiss="modal"
+            (click)="enviar_invitacion()">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Confirmar inicio -->
+  <div class="modal fade" id="start-confirm-modal" tabindex="-1" aria-labelledby="start-confirm-modal-label"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="start-confirm-modal-label">Preparar reunión</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding: 1rem;">
+          <p class="text-align-center margin-0">
+            Esta acción permitirá al administrador y a los convocados ingresar a la sala de la reunión
+          </p>
+          <p class="text-align-center mt-2 margin-bottom-0">¿Desea continuar?</p>
+        </div>
+        <div class="modal-footer border-top-none">
+          <button class="btn outline-btn small-btn pt-tertiary" data-bs-dismiss="modal">Cancelar</button>
+          <button class="btn filled-btn small-btn pt-septenary" data-bs-dismiss="modal"
+            (click)="iniciarReunion()">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal reprogramación -->
+  <div class="modal fade" id="reschedule-modal" tabindex="-1" aria-labelledby="reschedule-modal-label"
+    aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="reschedule-modal-label">Reprogramar reunión</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding: 1rem;">
+          <form [formGroup]="formularioReprogramar">
+            <input required class="form-control" type="date" formControlName="fecha_reunion">
+            <input required class="form-control mt-2" type="time" formControlName="hora">
+            <button (click)="checkReschedule($event, '#reschedule-confirm-modal', '#reschedule-modal')"
+              class="btn width-100 mt-2" type="submit">
+              <i class="far fa-calendar me-1"></i>
+              <span>Reprogramar</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal confirmar reprogramación -->
+  <div class="modal fade" id="reschedule-confirm-modal" tabindex="-1" aria-labelledby="reschedule-confirm-modal-label"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="reschedule-confirm-modal-label">Reprogramar reunión</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding: 1rem;">
+          <p class="text-align-center margin-0">
+            Reprogramar esta reunión enviará un correo de invitación a todos los convocados.
+          </p>
+          <p class="text-align-center mt-2 margin-bottom-0">¿Desea continuar?</p>
+        </div>
+        <div class="modal-footer border-top-none">
+          <button class="btn outline-btn small-btn pt-tertiary" data-bs-dismiss="modal">Cancelar</button>
+          <button class="btn filled-btn small-btn pt-septenary" data-bs-dismiss="modal"
+            (click)="reprogramarReunion()">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal enviar email reunion cancelada -->
+  <div class="modal fade" id="email-reunion-cancelada-modal" tabindex="-1"
+    aria-labelledby="email-reunion-cancelada-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="email-reunion-cancelada-modal-label">Enviar informe de la cancelación</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding: 1rem;">
+          <p class="text-align-center margin-0">
+            ¿Desea enviar correo dando informe de la cancelación de una reunión?
+          </p>
+        </div>
+        <div class="modal-footer border-top-none">
+          <button class="btn outline-btn small-btn pt-tertiary" data-bs-dismiss="modal">Cancelar</button>
+          <button class="btn filled-btn small-btn pt-septenary" data-bs-dismiss="modal"
+            (click)="correoCancelacion()">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="square-jelly-box" [fullScreen]="true">
+  <p style="color: white"> Cargando... </p>
+</ngx-spinner>

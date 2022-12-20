@@ -1,0 +1,30 @@
+.page-content {
+  background: var(--hex-quaternary-palette);
+  padding: 0;
+}
+
+.welcome-section {
+  background: transparent linear-gradient(270deg, #16151e00 0%, #16151e7b 34%, #85754e 100%) 0% 0% no-repeat padding-box;
+  padding: 0.5rem 0.5rem 0.5rem 2.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5em;
+  position: absolute;
+  font-weight: 400;
+  color: #ffffff;
+  bottom: 10%;
+  width: 100%;
+  left: 0;
+}
+
+.welcome-container {
+  // @media only screen and (max-width: 666px) {
+  @media only screen and (max-width: 992px) {
+    height: 200px;
+  }
+}
+
+.title-container {
+  @media only screen and (min-width: 993px) {
+    margin-bottom: 5rem;
+  }
+}

@@ -1,0 +1,74 @@
+:root {
+  --hex-primary-palette: #16151e;
+  --hex-secondary-palette: #f8f8f8;
+  --hex-tertiary-palette: #545454;
+  --hex-quaternary-palette: #ffffff;
+  --hex-quinary-palette: #85754e;
+  --hex-senary-palette: #29628d;
+  --hex-septenary-palette: #44a18f;
+  --hex-octonary-palette: #f6f6f6;
+  --hex-nonary-palette: #9f8c5b;
+  --hex-denary-palette: #1f1e27;
+  --hex-eleventh-palette: #cfcfcf;
+  --hex-success-palette: #54d4bb;
+  --hex-danger-palette: #f93245;
+  --hex-warning-palette: #f8cc12;
+}
+
+:root {
+  --primary-palette: 22, 21, 30;
+  --secondary-palette: 248, 248, 248;
+  --tertiary-palette: 84, 84, 84;
+  --quaternary-palette: 255, 255, 255;
+  --quinary-palette: 133, 117, 78;
+  --senary-palette: 41, 98, 141;
+  --septenary-palette: 68, 161, 143;
+  --octonary-palette: 246, 246, 246;
+  --nonary-palette: 159, 140, 91;
+  --denary-palette: 31, 30, 39;
+  --eleventh-palette: 207, 207, 207;
+  --success-palette: 84, 212, 187;
+  --danger-palette: 249, 50, 69;
+  --warning-palette: 248, 204, 18;
+}
+
+$list: primary, secondary, tertiary, quaternary, quinary, senary, septenary, octonary, nonary, denary, eleventh, success,
+  danger, warning;
+@each $var in $list {
+  .hpt-#{$var} {
+    --hex-selected-palette: var(--hex-#{$var}-palette);
+  }
+  .pt-#{$var} {
+    --selected-palette: var(--#{$var}-palette);
+  }
+  .bg-#{$var} {
+    background: rgb(var(--#{$var}-palette));
+  }
+  .bgc-#{$var} {
+    background-color: rgb(var(--#{$var}-palette));
+  }
+  .cl-#{$var} {
+    color: rgb(var(--#{$var}-palette));
+  }
+  .bcl-#{$var} {
+    border-color: rgb(var(--#{$var}-palette));
+  }
+  .af-bg-#{$var}::after {
+    background: rgb(var(--#{$var}-palette));
+  }
+  .bg-#{$var}-i {
+    background: rgb(var(--#{$var}-palette)) !important;
+  }
+  .bgc-#{$var}-i {
+    background-color: rgb(var(--#{$var}-palette)) !important;
+  }
+  .cl-#{$var}-i {
+    color: rgb(var(--#{$var}-palette)) !important;
+  }
+  .bcl-#{$var}-i {
+    border-color: rgb(var(--#{$var}-palette)) !important;
+  }
+  .af-bg-#{$var}-i::after {
+    background: rgb(var(--#{$var}-palette)) !important;
+  }
+}

@@ -1,0 +1,20 @@
+.nav.nav-tabs {
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.nav.nav-tabs > .nav-item > .nav-link {
+  color: var(--hex-tertiary-palette);
+  background-color: transparent;
+  font-weight: 400;
+}
+
+.nav.nav-tabs > .nav-item > .nav-link:hover {
+  border-color: #e6e6e6 #e6e6e6 #e6e6e6;
+  font-weight: 700;
+}
+
+.nav.nav-tabs > .nav-item > .nav-link.active {
+  border-color: #e6e6e6 #e6e6e6 #fff;
+  color: var(--hex-primary-palette);
+  font-weight: 700;
+}

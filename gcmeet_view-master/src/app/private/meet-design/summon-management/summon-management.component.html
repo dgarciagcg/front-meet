@@ -1,0 +1,74 @@
+<div class="modal fade" id="summon-modal" tabindex="-1" aria-labelledby="summon-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="summon-modal-label">Convocatoria</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body pretty-scrollbar" style="padding: 1rem;">
+                <ng-container *ngTemplateOutlet="content"></ng-container>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<ng-template #content>
+    <h6 class="margin-0 mt-2">Convocar</h6>
+    <form id="summon-form" [formGroup]="formularioAgregarAsistente" (ngSubmit)="agregarAsistente()">
+
+        <!-- Tipo persona -->
+        <label class="mt-2 position-relative width-100"
+            [ngStyle]="{ 'display': [0, 2, '0', '2'].includes(formularioAgregarAsistente.value.tipo) ? 'block' : 'none' }">
+            <div class="position-absolute">Persona</div>
+            <select class="form-select" formControlName="tipo" (change)="tipoPersona = $any($event.target).value">
+                <option value="0" selected>Natural</option>
+                <option value="2">Jurídica</option>
+            </select>
+        </label>
+
+        <!-- Entidad -->
+        <input autocomplete="off" required class="form-control mt-2 entity-input" type="hidden" formControlName="nit"
+            placeholder="Nit *" list="nit-list" (change)="autocompletarPorNit($any($event.target).value)">
+        <datalist id="nit-list">
+            <ng-container *ngFor="let entidad of entidades; let i = index">
+                <option value="{{ entidad.nit }}">
+                    {{ entidad.razon_social ? entidad.razon_social.toUpperCase() : '' }}
+                </option>
+            </ng-container>
+        </datalist>
+        <input required class="form-control mt-2 entity-input" type="hidden" formControlName="razon_social"
+            placeholder="Razon social *">
+
+        <h6 class="mt-2" *ngIf="[2, '2'].includes(formularioAgregarAsistente.value.tipo)">
+            Representante legal
+        </h6>
+
+        <!-- identificacion -->
+        <input autocomplete="off" required class="form-control mt-2" type="text" formControlName="identificacion"
+            placeholder="Identificación *" list="user-list-by-id" (change)="autocompletar($any($event.target).value, formularioAgregarAsistente.value.tipo)">
+        <datalist id="user-list-by-id">
+            <ng-container *ngFor="let recurso of recursosGc_MeetYGcm; let i = index">
+                <option value="{{ recurso.identificacion }}">{{ recurso.nombre.toUpperCase() }}</option>
+            </ng-container>
+        </datalist>
+        <!-- nombre -->
+        <input autocomplete="off" required class="form-control mt-2" type="text" formControlName="nombre"
+            placeholder="Nombre *">
+        <!-- correo -->
+        <input required class="form-control mt-2" type="mail" formControlName="correo" placeholder="Correo *">
+        <!-- teléfono -->
+        <input class="form-control mt-2" type="text" formControlName="telefono" placeholder="Teléfono">
+
+        <!-- Participación -->
+        <h6 class="mt-2" *ngIf="inputParticipation.type !== 'hidden'">Paraticipación</h6>
+        <input #inputParticipation required class="form-control mt-2" type="hidden" formControlName="participacion"
+            placeholder="Participación *">
+
+
+        <button type="submit" class="btn width-100 mt-2 white-color">
+            <i class="fas fa-plus-square me-2"></i>
+            <span>Agregar</span>
+        </button>
+    </form>
+</ng-template>

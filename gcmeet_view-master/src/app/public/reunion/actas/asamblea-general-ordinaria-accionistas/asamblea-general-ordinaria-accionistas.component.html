@@ -1,0 +1,414 @@
+<div class="page-content" id="page-content-asamblea-general-ordinaria-accionistas">
+    <div class="page-break row-pdf" id="page-1" style="height: 100%; position: relative;"
+        [style]="{ 'background-image': 'url(' + env.root + '/assets/img/meets/acta2.JPG)' }">
+        <div style="text-align: center; height: 20%; width: 100%;">
+            <img [src]="env.root + meet.logo" style="height: 7.8125rem; margin-top: 5%;">
+        </div>
+        <h4
+            style="text-transform: uppercase; text-align: center; font-weight: bold; margin: 0; height: 65%; width: 100%; padding: 0 5rem;">
+            Asamblea General Ordinaria de Accionistas de {{meet.grupo}}
+        </h4>
+        <h2
+            style="font-weight: bold; color: #ffffff; text-transform: uppercase; text-align: center; width: 100%; margin: 0; height: 5%; width: 100%;">
+            Celebrado el día {{meetDate | date:'d/M/yy'}}
+        </h2>
+        <div style="background: #16151e; height: 10%; width: 100%; border-top: 0.35rem solid #6a5e41;">
+            <h4
+                style="font-weight: normal; color: #ffffff; text-transform: uppercase; text-align: center; margin-bottom: 0; margin-top: 4.5%;">
+                Acta No. {{consecutivoActa}}
+            </h4>
+        </div>
+    </div>
+    <div id="body-page">
+        <div class="page-break row-pdf" style="page-break-after: always;">
+            <div class="col-pdf-12">
+                <h5 style="text-transform: uppercase; margin: 0 3rem 2rem 3rem; text-align: center; font-weight: bold;">
+                    Asamblea General Ordinaria de Accionistas de {{meet.grupo}}
+                </h5>
+                <p style="text-align: justify;">
+                    En la ciudad de Medellín, departamento de Antioquia, República de Colombia en la oficina principal
+                    de la compañía localizada en la calle 11 A No. 31 A – 89 Interior 601, barrio el poblado, Medellín,
+                    siendo las {{meetDate | date:'h:mm a'}} del día {{meetDate | date:"d"}} de
+                    {{meetDate | date:"MMMM"}} de {{meetDate | date:"yyyy"}}, atendiendo la convocatoria realizada por
+                    escrito por el representante legal mediante comunicación efectuada el
+                    {{announcementDate | date:"d"}} de {{announcementDate | date:"MMMM"}} de
+                    {{announcementDate | date:"yyyy"}}, teniendo en cuenta que se labora de manera ordinaria los días
+                    sábados en las oficinas de la administración y por lo tanto se entiende el sábado como día hábil, y
+                    enviada a la dirección registrada en la compañía por cada uno de los accionistas, y Garantias
+                    Comunitarias Grupo S.A. acogiéndose a decreto 398 del 13 de marzo de 2020 emitido por el Ministerio
+                    de Industria y Turismo ante la emergencia sanitaria por el COVID-19 ha realizado la Asamblea General
+                    de Accionistas de forma virtual vía ZOOM y se reunieron previo registro en la plataforma virtual
+                    para la reunión las siguientes personas y de esta manera conformar la Asamblea General Ordinaria de
+                    Accionistas, lo que representa el {{participation}}% de las acciones en circulación:
+                </p>
+                <table style="margin: 3rem 0;">
+                    <thead>
+                        <tr>
+                            <th>Asistente</th>
+                            <th>Accionista</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-container *ngFor="let item of summonedLoggedinList">
+                            <tr>
+                                <td>
+                                    <span style="text-transform: capitalize;">
+                                        {{(item.nombre_representante || item.nombre).toLowerCase()}}
+                                    </span>
+                                </td>
+                                <td
+                                    [innerHTML]="(item.razon_social ? ('Representación de: ' + (spanStart + item.razon_social.toLowerCase() + spanEnd)) : (item.nombre_representante ? ('Representación de: ' + (spanStart + item.nombre.toLowerCase() + spanEnd)) : 'Nombre propio')) | safeHtml">
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="page-break row-pdf">
+            <div class="col-pdf-12">
+                <h5 style="text-transform: uppercase; margin: 0 0 2rem 0; font-weight: bold;">
+                    DESARROLLO DE LA REUNIÓN.
+                </h5>
+            </div>
+            <div class="col-pdf-12">
+                <ng-container *ngFor="let program of programmingList; index as i; last as l;">
+                    <ng-container *ngIf="i === 0;">
+                        <h6 style="text-transform: uppercase; margin: 0 0 2rem 0; font-weight: bold;">
+                            {{program.orden}}. {{program.titulo}}
+                        </h6>
+                        <p style="text-align: justify;">
+                            Se hacen presentes y confirman mediante registro en la plataforma virtual para la
+                            reunión de la asamblea el {{participation}}% de las acciones suscritas y pagadas
+                            representadas en los siguientes accionistas:
+                        </p>
+                        <table style="margin: 3rem 0 0 0;">
+                            <thead>
+                                <tr>
+                                    <th>Sociedad</th>
+                                    <th>Participación</th>
+                                    <th>Asistente</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <ng-container *ngFor="let summoned of summonedLoggedinList">
+                                    <tr>
+                                        <td
+                                            [innerHTML]="(summoned.razon_social ? (spanStart + summoned.razon_social.toLowerCase() + spanEnd) : (spanStart + (summoned.nombre_representante ? summoned.nombre_representante : summoned.nombre + spanEnd).toLowerCase())) | safeHtml">
+                                        </td>
+                                        <td style="text-align: center;">
+                                            {{summoned.participacion + '%'}}
+                                        </td>
+                                        <td>
+                                            <span style="text-transform: capitalize;">
+                                                {{(summoned.nombre_representante || summoned.nombre).toLowerCase()}}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                                <tr>
+                                    <td>Total</td>
+                                    <td style="text-align: center;">{{participation}}%</td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p style="margin-top: 2rem;">De esta manera se cuenta con el Quorum para decidir y deliberar.
+                        </p>
+                        <ng-container *ngIf="invitedLoggedinList.length">
+                            <p>Como invitados asisten los doctores</p>
+                            <ul>
+                                <ng-container *ngFor="let invited of invitedLoggedinList">
+                                    <li>{{invited.nombre}}</li>
+                                </ng-container>
+                            </ul>
+                        </ng-container>
+                        <p>
+                            Se hace constar que durante los quince (15) días hábiles anteriores a la celebración de
+                            la presente reunión, que es término señalado tanto en los estatutos como en el artículo
+                            447 del código de comercio, los libros de la compañía y demás comprobantes
+                            contables se encontraban a disposición de los accionistas en las oficinas de la
+                            sociedad ubicadas en la calle 11 A # 39 A – 89 Interior 601 Barrio el Poblado,
+                            Medellín.
+                        </p>
+                    </ng-container>
+                    <ng-container *ngIf="i === 1;">
+                        <section style="margin-bottom: 5rem;">
+                            <h6 style="text-transform: uppercase; margin: 2rem 0 2rem 0; font-weight: bold;">
+                                {{program.orden}}. {{program.titulo}}
+                            </h6>
+                            <p style="white-space: pre-line;">
+                                {{program.descripcion}}
+                            </p>
+                            <p style="margin-bottom: 3rem;">
+                                Después de consultar a la asamblea es
+                                {{(1 | getPercent:program:answerList:summonedLoggedinList) >= 0.5 ? (
+                                'aprobado ' + dayOrderMessage + ((1 |
+                                getPercent:program:answerList:summonedLoggedinList) *
+                                100).toFixed(2)) : ('desaprobado ' + dayOrderMessage + ((100-(1 |
+                                getPercent:program:answerList:summonedLoggedinList) * 100).toFixed(2)))}}%
+                                de las acciones presentes el siguiente orden del día:
+                            </p>
+                            <ng-container *ngFor="let dayOrder of programmingList;">
+                                <div
+                                    style="border-bottom: 0.125rem solid #cccccc; font-size: 1rem; margin: 1rem 0; font-weight: bold; color: #545454;">
+                                    {{dayOrder.orden}}. {{dayOrder.titulo}}
+                                    <ng-container *ngFor="let option of dayOrder.opciones">
+                                        <div
+                                            style="font-size: 1rem; padding-left: 2rem; margin: 0.5rem 0; color: #545454; font-weight: normal;">
+                                            {{option.orden | letrasOrdenadas:1}}.
+                                            {{+dayOrder.tipo === 5 ? option.descripcion : option.titulo}}
+                                        </div>
+                                    </ng-container>
+                                </div>
+                            </ng-container>
+                        </section>
+                    </ng-container>
+                    <ng-container *ngIf="i > 1 && !l;">
+                        <h6 style="text-transform: uppercase; margin: 2rem 0 2rem 0; font-weight: bold;">
+                            {{program.orden}}. {{program.titulo}}
+                        </h6>
+                        <p style="white-space: pre-line;">
+                            {{program.descripcion}}
+                        </p>
+                        <!-- Sin respuesta -->
+                        <ng-container *ngIf="+program.tipo === 0">
+                            <ng-container *ngIf="program.opciones.length">
+                                <ng-container *ngFor="let option of program.opciones">
+                                    <div style="padding-left: 1rem;">
+                                        <h6 style="margin: 2rem 0 2rem 0; font-weight: bold;">
+                                            {{option.orden | letrasOrdenadas:1}}.
+                                            <span style="text-transform: uppercase;">{{option.titulo}}</span>
+                                        </h6>
+                                        <p style="white-space: pre-line;">
+                                            {{option.descripcion}}
+                                        </p>
+                                    </div>
+                                </ng-container>
+                            </ng-container>
+                        </ng-container>
+                        <!-- Votación -->
+                        <ng-container *ngIf="+program.tipo === 1">
+                            <ng-container *ngIf="program.opciones.length">
+                                <div style="padding-left: 1rem;">
+                                    <ng-container *ngFor="let option of program.opciones">
+                                        <h6 style="margin: 2rem 0 2rem 0; font-weight: bold;">
+                                            {{option.orden | letrasOrdenadas:1}}.
+                                            <span style="text-transform: uppercase;">{{option.titulo}}</span>
+                                        </h6>
+                                        <p style="white-space: pre-line;">
+                                            {{option.descripcion}}
+                                        </p>
+                                        <p>
+                                            Después de consultar a la asamblea es
+                                            {{(1 | getPercent:program:answerList:summonedLoggedinList) >= 0.5 ? (
+                                            'aprobado por el ' + ((1 |
+                                            getPercent:program:answerList:summonedLoggedinList) *
+                                            100).toFixed(2)) : ('desaprobado por el ' + ((100-(1 |
+                                            getPercent:program:answerList:summonedLoggedinList) * 100).toFixed(2)))}}%
+                                            de las acciones presentes.
+                                        </p>
+                                    </ng-container>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngIf="!program.opciones.length">
+                                <p>
+                                    Después de consultar a la asamblea es
+                                    {{(1 | getPercent:program:answerList:summonedLoggedinList) >= 0.5 ?
+                                    ('aprobado por el ' + ((1 | getPercent:program:answerList:summonedLoggedinList) *
+                                    100).toFixed(2)) : ('desaprobado por el ' + ((100-(1 |
+                                    getPercent:program:answerList:summonedLoggedinList)
+                                    * 100).toFixed(2)))}}% de las acciones presentes.
+                                </p>
+                            </ng-container>
+                        </ng-container>
+                        <!-- Elección -->
+                        <ng-container *ngIf="+program.tipo === 5">
+                            <p>
+                                Después de consultar a la asamblea es
+                                {{(1 | getElectionPercent:program:answerList:summonedLoggedinList) >= 0.5 ?
+                                ('aprobado ' + ' por el ' + ((1 |
+                                getElectionPercent:program:answerList:summonedLoggedinList) * 100).toFixed(2)) :
+                                ('desaprobado por el ' + ((100-(1 |
+                                getElectionPercent:program:answerList:summonedLoggedinList) * 100).toFixed(2)))}}% de
+                                las acciones presentes.
+                            </p>
+                        </ng-container>
+                        <!-- Entrada de texto -->
+                        <!-- <ng-container *ngIf="+program.tipo === 4">
+                            <ng-container *ngIf="program.opciones.length">
+                                <ng-container *ngFor="let option of program.opciones">
+
+                                    <h6 style="margin: 2rem 0 2rem 0; font-weight: bold;">
+                                        {{option.orden | letrasOrdenadas:1}}.
+                                        <span style="text-transform: uppercase;">{{option.titulo}}</span>
+                                    </h6>
+                                    <p style="white-space: pre-line;">
+                                        {{option.descripcion}}
+                                    </p>
+
+                                    <ng-container
+                                        *ngFor="let item of (program | getCommentList:answerList:summonedList)">
+                                        <h6>{{item.summoned}}:</h6>
+                                        <p>{{item.comment}}</p>
+                                    </ng-container>
+
+                                </ng-container>
+                            </ng-container>
+
+                            <ng-container *ngIf="!program.opciones.length">
+                                <div style="padding-left: 1rem;">
+                                    <ng-container
+                                        *ngFor="let item of (program | getCommentList:answerList:summonedList)">
+                                        <h6>{{item.summoned}}:</h6>
+                                        <p>{{item.comment}}</p>
+                                    </ng-container>
+                                </div>
+                            </ng-container>
+                        </ng-container> -->
+                    </ng-container>
+                    <ng-container *ngIf="l">
+                        <h6 style="text-transform: uppercase; margin: 0 0 2rem 0; font-weight: bold;">
+                            {{program.orden}}. {{program.titulo}}
+                        </h6>
+                        <p style="text-align: justify;">
+                            Cumplido con cada uno de los puntos del orden del día establecido y aprobado por
+                            la honorable asamblea de accionistas, se da por terminada la reunión, siendo las
+                            {{endDate | date:'h:mm a'}} del día {{endDate | date:"d"}} de {{endDate | date:"MMMM"}}
+                            de {{endDate | date:"yyyy"}}
+                        </p>
+                    </ng-container>
+                </ng-container>
+            </div>
+            <div class="col-pdf-6" style="margin-top: 2rem;">
+                <h6>Presidente:</h6>
+                <ng-container *ngIf="Presidente.is && !Presidente.sign">
+                    <div class="signature-pad-container">
+                        <signature-pad style="border-bottom: 1px dotted rgb(0, 0, 0)" [options]="signaturePadOptions">
+                        </signature-pad>
+                        <div class="mt-3" [ngStyle]="{ width: signaturePadOptions.canvasWidth + 'px' }">
+                            <button class="btn" type="submit" data-bs-toggle="modal"
+                                data-bs-target="#sign-presidente-modal">Confirmar</button>
+                            <button class="btn ms-3" (click)="limpiarPresidente()" type="submit">Limpiar</button>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="Presidente.sign">
+                    <img [src]="Presidente.sign"
+                        [ngStyle]="{ 'height': signaturePadOptions.canvasHeight + 'px', 'width': signaturePadOptions.canvasWidth + 'px' }"
+                        style="border-bottom: 0.0625rem solid #000000;">
+                </ng-container>
+            </div>
+            <div class="col-pdf-6" style="margin-top: 2rem;">
+                <h6>Secretario:</h6>
+                <ng-container *ngIf="Secretario.is && !Secretario.sign">
+                    <div class="signature-pad-container">
+                        <signature-pad style="border-bottom: 1px dotted rgb(0, 0, 0)" [options]="signaturePadOptions">
+                        </signature-pad>
+                        <div class="mt-3" [ngStyle]="{ width: signaturePadOptions.canvasWidth + 'px' }">
+                            <button class="btn" type="submit" data-bs-toggle="modal"
+                                data-bs-target="#sign-secretario-modal">Confirmar</button>
+                            <button class="btn ms-3" (click)="limpiarSecretario()" type="submit">Limpiar</button>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="Secretario.sign">
+                    <img [src]="Secretario.sign"
+                        [ngStyle]="{ 'height': signaturePadOptions.canvasHeight + 'px', 'width': signaturePadOptions.canvasWidth + 'px' }"
+                        style="border-bottom: 0.0625rem solid #000000;">
+                </ng-container>
+            </div>
+            <div class="row-end"></div>
+        </div>
+    </div>
+
+    <!-- Modal guardar pdf -->
+    <div class="modal fade" id="acta-confirm-modal" tabindex="-1" aria-labelledby="acta-confirm-modal-label"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="acta-confirm-modal-label">Guardar acta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="padding: 1rem;">
+                    <p class="text-align-center margin-0" style="font-size: 0.7rem;">
+                        Esta acción dará por finalizada la edición del acta.
+                        <br>
+                        ¿Esta seguro que desea guardar este acta?
+                    </p>
+                </div>
+                <div class="modal-footer border-top-none">
+                    <button class="btn outline-btn small-btn pt-tertiary" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn filled-btn small-btn pt-septenary" data-bs-dismiss="modal"
+                        (click)="download('save')">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal confirmar firma presidente -->
+    <div class="modal fade" id="sign-presidente-modal" tabindex="-1" aria-labelledby="sign-presidente-modal-label"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sign-presidente-modal-label">Guardar acta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="padding: 1rem;">
+                    <p class="text-align-center margin-0" style="font-size: 0.7rem;">
+                        Esta acción dará por finalizada la edición del acta.
+                        <br>
+                        ¿Esta seguro que desea confirmar esta firma?
+                    </p>
+                </div>
+                <div class="modal-footer border-top-none">
+                    <button class="btn outline-btn small-btn pt-tertiary" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn filled-btn small-btn pt-septenary" data-bs-dismiss="modal"
+                        (click)="drawCompletePresidente()">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal confirmar firma secretario -->
+    <div class="modal fade" id="sign-secretario-modal" tabindex="-1" aria-labelledby="sign-secretario-modal-label"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sign-secretario-modal-label">Guardar acta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="padding: 1rem;">
+                    <p class="text-align-center margin-0" style="font-size: 0.7rem;">
+                        Esta acción dará por finalizada la edición del acta.
+                        <br>
+                        ¿Esta seguro que desea confirmar esta firma?
+                    </p>
+                </div>
+                <div class="modal-footer border-top-none">
+                    <button class="btn outline-btn small-btn pt-tertiary" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn filled-btn small-btn pt-septenary" data-bs-dismiss="modal"
+                        (click)="drawCompleteSecretario()">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn bg-primary cl-quaternary-i display-flex" style="position: absolute; right: 2rem; bottom: 2rem;"
+        (click)="download('download')">
+        <span class="me-3">Descargar</span>
+        <i class="fas fa-file-pdf block"></i>
+    </button>
+
+    <ng-container *ngIf="rol === 'Administrador'">
+        <button class="btn bg-primary cl-quaternary-i display-flex" data-bs-target="#acta-confirm-modal"
+            data-bs-toggle="modal" style="position: absolute; right: 2rem; bottom: 5rem;">
+            <span class="me-3">Guardar</span>
+            <i class="fas fa-save block"></i>
+        </button>
+    </ng-container>
+
+</div>

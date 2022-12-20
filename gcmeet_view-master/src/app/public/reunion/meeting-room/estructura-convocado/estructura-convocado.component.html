@@ -1,0 +1,106 @@
+<div class="modal fade" id="summoned-modal" tabindex="-1" aria-labelledby="summoned-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="summoned-modal-label">Convocatoria</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body position-relative" style="padding: 1rem;">
+                <h6 class="margin-0">Buscar</h6>
+
+                <div class="row">
+                    <div class="col-sm-12 col-lg-4">
+                        <label class="mt-2 position-relative width-100">
+                            <div class="position-absolute">Persona</div>
+                            <select class="form-select" (change)="tipoPersona = $any($event.target).value">
+                                <option value="0" selected>Natural</option>
+                                <option value="1">Jurídica</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="col-sm-12 col-lg-8">
+                        <input autocomplete="off" required class="form-control mt-2" type="search" #buscador
+                            [attr.list]="tipoPersona === '0' ? 'user-list-by-id' : 'nit-list'" placeholder="Buscar"
+                            (change)="(tipoPersona === '0' ? autocompletar($any($event.target).value) : autocompletarPorNit($any($event.target).value)); buscador.value = '';">
+                        <datalist id="user-list-by-id">
+                            <ng-container *ngFor="let recurso of recursosGc_MeetYGcm; let i = index">
+                                <option value="{{ recurso.identificacion }}">{{ recurso.nombre }}</option>
+                            </ng-container>
+                        </datalist>
+                        <datalist id="nit-list">
+                            <ng-container *ngFor="let entidad of entidades; let i = index">
+                                <option value="{{ entidad.nit }}"> {{ entidad.razon_social }} </option>
+                            </ng-container>
+                        </datalist>
+                    </div>
+                </div>
+
+                <h6 class="margin-0 mt-2">Convocar</h6>
+                <form id="summon-form" [formGroup]="summonedForm" (submit)="agregarConvocado()">
+                    <!-- identificacion -->
+                    <input autocomplete="off" required class="form-control mt-2" type="text"
+                        formControlName="identificacion" placeholder="Identificación *">
+                    <!-- nombre -->
+                    <input autocomplete="off" required class="form-control mt-2" type="text" formControlName="nombre"
+                        placeholder="Nombre *">
+                    <!-- correo -->
+                    <input required class="form-control mt-2" type="mail" formControlName="correo"
+                        placeholder="Correo *">
+                    <!-- telefono -->
+                    <input class="form-control mt-2" type="text" formControlName="telefono" placeholder="Teléfono">
+                    <!-- tipo -->
+                    <label class="mt-2 position-relative width-100">
+                        <div class="position-absolute">Tipo</div>
+                        <select class="form-select" formControlName="tipo">
+                            <option value="0">Participante</option>
+                            <option value="1">Invitado</option>
+                            <option value="2">Representante legal</option>
+                        </select>
+                    </label>
+                    <!-- rol -->
+                    <input autocomplete="off" required class="form-control mt-2" type="text" formControlName="rol"
+                        placeholder="Rol *" list="rol-list">
+                    <datalist id="rol-list">
+                        <option *ngFor="let rol of arrayRoles; let i = index" value="{{ rol.descripcion }}"
+                            [attr.data-value]="rol.id_rol">
+                    </datalist>
+                    <!-- nit -->
+                    <input autocomplete="off" required class="form-control mt-2 entity-input" type="hidden"
+                        formControlName="nit" placeholder="Nit *">
+                    <input required class="form-control mt-2 entity-input" type="hidden" formControlName="razon_social"
+                        placeholder="Razon social *">
+                    <input class="form-control mt-2" type="hidden" formControlName="participacion"
+                        placeholder="Participación">
+                    <button type="submit" class="btn width-100 mt-2 white-color">
+                        <i class="fas fa-plus-square me-2"></i>
+                        <span>Agregar</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal agregar convocado -->
+<div class="modal fade" id="summoned-add-confirm-modal" tabindex="-1" aria-labelledby="summoned-add-confirm-modal-label"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="summoned-add-confirm-modal-label">Convocar</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="padding: 1rem;">
+                <p class="text-align-center margin-0">
+                    ¿Esta seguro que desea convocar a este usuario?
+                </p>
+            </div>
+            <div class="modal-footer border-top-none">
+                <button class="btn outline-btn small-btn pt-tertiary"
+                    (click)="openModal('#summoned-modal', '#summoned-add-confirm-modal')">Cancelar</button>
+                <button class="btn filled-btn small-btn pt-septenary" data-bs-dismiss="modal"
+                    (click)="confirmarConvocado()">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>

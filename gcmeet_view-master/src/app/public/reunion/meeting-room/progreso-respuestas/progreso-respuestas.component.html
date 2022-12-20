@@ -1,0 +1,13 @@
+<h6 class="cl-inherit desktop-title">Porcentaje de respuesta</h6>
+<p class="cl-inherit mobile-title">Respuestas</p>
+<div class="display-flex progress-values">
+    <h6 class="width-100 cl-inherit">{{(voted * 100) | toFixed:2}}%</h6>
+    <h6 class="width-100 cl-inherit text-align-right font-weight-400">
+        {{this.answerList.length}}/{{length}}
+    </h6>
+</div>
+<div class="progress pt-septenary bg-denary" style="border-radius: 1rem;">
+    <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+        [ngStyle]="{ 'width': (voted * 100) + '%' }" [attr.aria-valuenow]="(voted * 100)" style="border-radius: 1rem;">
+    </div>
+</div>

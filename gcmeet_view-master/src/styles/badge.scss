@@ -1,0 +1,30 @@
+.primary-badge {
+  color: rgb(var(--selected-palette, var(--primary-palette)));
+  background: var(--hex-secondary-palette);
+  border-radius: 0.4rem;
+  padding: 0.5em 2em;
+  position: relative;
+  font-size: 0.7rem;
+}
+
+.primary-badge::after {
+  background: rgb(var(--selected-palette, var(--primary-palette)));
+  border-radius: inherit;
+  content: "";
+}
+
+.primary-badge::after {
+  transition: all 125ms ease;
+  position: absolute;
+  height: 100%;
+  opacity: 0.2;
+  content: "";
+  width: 100%;
+  left: 0;
+  top: 0;
+}
+
+.primary-badge > * {
+  position: relative;
+  z-index: 1;
+}

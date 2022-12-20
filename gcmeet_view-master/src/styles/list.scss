@@ -1,0 +1,171 @@
+.list-group .list-group-item {
+  transition: color 0.25s, background 0.25s;
+  background: transparent;
+  padding: 0.75rem 1rem;
+  font-size: 0.75rem;
+  color: #b1b1b1;
+  font-weight: 400;
+  cursor: pointer;
+  border: none;
+}
+
+.list-group .list-group-item::after {
+  border-radius: 0.3rem;
+}
+
+.list-group .list-group-item.active,
+.list-group .list-group-item:active,
+.list-group .list-group-item:hover,
+.list-group .list-group-item:focus {
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.list-group .list-group-item.active::after,
+.list-group .list-group-item:active::after,
+.list-group .list-group-item:hover::after,
+.list-group .list-group-item:focus::after {
+  background: var(--hex-quinary-palette);
+}
+
+.list-group .list-group-item .list-group-icon,
+.list-group .list-group-item .fas,
+.list-group .list-group-item .far {
+  transition: color 0.25s, background 0.25s;
+  margin-right: 1rem;
+}
+
+.list-group .list-group-item.active .list-group-icon,
+.list-group .list-group-item:active .list-group-icon,
+.list-group .list-group-item:hover .list-group-icon,
+.list-group .list-group-item:focus .list-group-icon,
+.list-group .list-group-item.active .fas,
+.list-group .list-group-item.active .far,
+.list-group .list-group-item:active .fas,
+.list-group .list-group-item:active .far,
+.list-group .list-group-item:hover .fas,
+.list-group .list-group-item:hover .far,
+.list-group .list-group-item:focus .fas,
+.list-group .list-group-item:focus .far {
+  color: #ffffff;
+}
+
+.primary-list {
+  list-style-type: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.dropdown-content {
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 0.25rem;
+  padding: 0.5rem 0;
+}
+
+.dropdown-content li {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #545454;
+  min-height: auto;
+  text-align: left;
+  cursor: pointer;
+  padding: 0.5rem;
+  line-height: 1;
+  width: 100%;
+}
+
+.dropdown-content li > a,
+.dropdown-content li > span {
+  font-size: inherit;
+  line-height: 1;
+  display: block;
+  color: inherit;
+  padding: 0;
+}
+
+.primary-list > .list-item,
+ul.primary-list > li {
+  padding-bottom: 1rem;
+  padding-top: 1rem;
+  font-size: 0.75rem;
+  color: #171717;
+  font-weight: 600;
+  flex-wrap: wrap;
+  display: flex;
+}
+
+.primary-list > .list-item:not(:last-child),
+ul.primary-list > li:not(:last-child) {
+  border-bottom: 0.0625rem solid #cbcbcb;
+}
+
+ul.primary-list > li > ul.primary-list,
+ul.primary-list > li > .primary-list,
+.list-item > .primary-list {
+  flex-basis: 100%;
+}
+
+ul.primary-list > li > .primary-list > .list-item,
+ul.primary-list > li > ul.primary-list > li,
+.list-item > .primary-list > .list-item {
+  border-top: 0.0625rem solid #cbcbcb;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+ul.primary-list > li > .primary-list > .list-item:first-child,
+ul.primary-list > li > ul.primary-list > li:first-child,
+.list-item > .primary-list > .list-item:first-child {
+  border-bottom: none;
+  padding-top: 1rem;
+  margin-top: 1rem;
+}
+
+ul.primary-list > li > .primary-list > .list-item:not(.first-lvl)::before,
+ul.primary-list > li > ul.primary-list > li:not(.first-lvl)::before,
+.list-item > .primary-list > .list-item:not(.first-lvl)::before {
+  border-bottom: 0.0625rem solid var(--hex-primary-palette);
+  top: calc(1rem + 0.0625rem + 0.5em);
+  position: absolute;
+  height: 0.0625rem;
+  content: "";
+  width: 1rem;
+  left: 0;
+}
+
+.primary-list > .list-item .lvl-line,
+ul.primary-list > li .lvl-line {
+  border-bottom: 0.0625rem solid var(--hex-primary-palette);
+  margin-right: 0.5rem;
+  height: 0.0625rem;
+  width: 1rem;
+  left: 0;
+}
+
+ul.secondary-list {
+  list-style-type: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.secondary-list > .list-item,
+ul.secondary-list > li {
+  border-radius: 0.4rem;
+  font-size: 0.75rem;
+  color: #ffffff;
+}
+
+.secondary-list > .list-item:hover,
+ul.secondary-list > li:hover {
+  background: #2d2c37;
+}
+
+.secondary-list > .list-item a,
+ul.secondary-list > li a {
+  justify-content: space-between;
+  padding-bottom: 0.5rem;
+  padding-right: 0.5rem;
+  padding-left: 0.5rem;
+  padding-top: 0.5rem;
+  display: flex;
+}

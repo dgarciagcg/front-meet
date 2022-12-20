@@ -1,0 +1,162 @@
+.left-aside {
+    background: var(--hex-quaternary-palette);
+    border-right: 0.0625rem solid #cfcfcf;
+    box-shadow: 0px 3px 20px #194b7014;
+    flex: 0 0 auto;
+    display: flex;
+    @media only screen and (max-width: 992px) {
+        justify-content: space-between;
+        align-items: center;
+        position: fixed;
+        padding: 1.5rem;
+        height: auto;
+        width: 100%;
+        z-index: 2;
+    }
+    @media only screen and (min-width: 993px) {
+        padding: 3rem 1.5rem 2.5rem;
+        flex-direction: column;
+    }
+}
+
+.page-content {
+    @media only screen and (max-width: 992px) {
+        padding-right: 6.25rem;
+        padding-top: 8.375rem;
+    }
+}
+
+.go-home-button {
+    @media only screen and (min-width: 993px) {
+        display: none;
+    }
+}
+
+.user-badge {
+    position: absolute;
+    border-radius: 50%;
+    font-size: 0.6rem;
+    padding: 0.25rem;
+    right: 10%;
+    top: 10%;
+}
+
+.right-aside {
+    background: var(--hex-primary-palette);
+    flex-direction: column;
+    display: flex;
+}
+
+.right-aside.desktop-aside {
+    padding: calc(4rem + 1.5rem) 1.25rem 1rem;
+    min-width: 18rem;
+    width: 18rem;
+    @media only screen and (max-width: 992px) {
+        display: none;
+    }
+}
+
+.right-aside.mobile-aside {
+    padding: 7.375rem 0.75rem 0.5rem;
+    overflow: hidden;
+    position: fixed;
+    height: 100vh;
+    width: 5rem;
+    z-index: 1;
+    right: 0;
+    top: 0;
+    @media only screen and (min-width: 993px) {
+        display: none;
+    }
+}
+
+.left-aside .btn {
+    box-shadow: 0px 0.1875rem 1.25rem #194b7014;
+    border: 0.0625rem solid #cfcfcf;
+    color: #cfcfcf;
+    display: block;
+    padding: 1rem;
+}
+
+.left-aside .btn:hover {
+    background: var(--hex-primary-palette);
+    color: var(--hex-quaternary-palette);
+}
+
+.summon-add-btn,
+.cancel-btn,
+.next-btn {
+    justify-content: center;
+    padding: 1.25rem 0.75rem;
+    align-items: center;
+    font-weight: 100;
+    font-size: 1rem;
+    display: flex;
+}
+
+.summon-add-btn,
+.summoned-btn,
+.next-btn {
+    background: var(--hex-denary-palette);
+    color: var(--hex-quaternary-palette);
+}
+
+.cancel-election-btn,
+.cancel-btn {
+    background: var(--hex-danger-palette);
+    color: var(--hex-quaternary-palette);
+}
+
+.nowrap-item {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.hoverable:hover {
+    box-shadow: 0px 0.1875rem 0.75rem #194b7014;
+}
+
+.programming-collapsable {
+    border-top-color: var(--hex-quinary-palette);
+}
+
+.programming-collapsable .primary-collapsable-header {
+    border-right: 0.06rem solid var(--hex-quinary-palette);
+    border-left: 0.06rem solid var(--hex-quinary-palette);
+    border-bottom-color: var(--hex-quinary-palette);
+    border-top-right-radius: 0.4rem;
+    border-top-left-radius: 0.4rem;
+}
+
+.blocked {
+    pointer-events: none;
+}
+
+.dropdown-content {
+    max-width: 18rem;
+}
+
+.cancel-election-btn,
+.summoned-btn {
+    justify-content: center;
+    align-items: center;
+    font-weight: 100;
+    font-size: 1rem;
+    padding: 0.5rem;
+    display: flex;
+}
+
+.cancel-election-btn.selected,
+.summoned-btn.selected {
+    background: var(--hex-quinary-palette);
+}
+
+.meet-link {
+    word-break: break-word;
+    color: #9d9d9d;
+}
+
+.meet-link:hover {
+    color: #ffffff;
+}

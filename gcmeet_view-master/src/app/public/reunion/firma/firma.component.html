@@ -1,0 +1,40 @@
+<div class="page-content background-size-cover background-position-center background-repeat-no-repeat"
+    style="background-image: url(assets/img/landing/background.jpg); padding: 0;">
+    <div class="display-flex width-100 height-100 align-items-center justify-content-center flex-direction-column">
+        <h1 class="font-weight-100" style="margin: 0 0 2rem;">
+            <span class="cl-quaternary font-weight-100">BIENVENIDO</span>
+        </h1>
+        <div class="padding-200rem bg-quaternary rounded-border text-align-center access-container">
+            <ng-container *ngIf="!showSignatureDiv">
+                <h6 class="text-align-center mb-0">Acceder a la reunión</h6>
+                <p class="text-align-center" style="padding: 0.5rem 2rem;">
+                    Ingresa tu número de documento para continuar
+                </p>
+                <form method="post" (submit)="enviarDocumento();">
+                    <div class="input-group">
+                        <div class="input-group-text"><i class="fas fa-id-card"></i></div>
+                        <input class="form-control" type="text" name="Identification" placeholder="Identificación"
+                            required [(ngModel)]="documentoIdentidad">
+                    </div>
+                    <button class="btn width-100 margin-top-100rem" type="submit">
+                        Continuar
+                    </button>
+                </form>
+            </ng-container>
+            <ng-container *ngIf="showSignatureDiv">
+                <h6>Firme aquí:</h6>
+                <signature-pad style="border-bottom:1px dotted rgb(0, 0, 0)" [options]="signaturePadOptions">
+                </signature-pad>
+                <div class="btn width-100 margin-top-100rem">
+                    <button class="btn" (click)="drawComplete()" type="submit">Enviar firma</button>
+                    <button class="btn ms-3" (click)="limpiar()" type="submit">Limpiar</button>
+                </div>
+            </ng-container>
+        </div>
+        <a class="return-button" routerLink="/public/home">Inicio</a>
+    </div>
+</div>
+
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="square-jelly-box" [fullScreen]="true">
+    <p style="color: white"> Cargando... </p>
+  </ngx-spinner>

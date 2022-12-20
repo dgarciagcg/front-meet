@@ -1,0 +1,186 @@
+.left-aside {
+    border-right: 0.0625rem solid #dee6ee;
+    background: var(--hex-primary-palette);
+    padding: 3rem 1.5rem 2.5rem;
+    flex-direction: column;
+    color: #ffffff;
+    display: flex;
+    @media only screen and (min-width: 993px) {
+        // width: 15.625rem;
+        // min-width: 15.625rem;
+        height: 100vh !important;
+        min-width: 18.75rem;
+        width: 18.75rem;
+    }
+    @media only screen and (max-width: 992px) {
+        order: 2;
+        // width: 15.625rem;
+        // min-width: 15.625rem;
+        height: 100% !important;
+        min-width: 100%;
+        width: 100%;
+    }
+}
+
+.right-aside {
+    flex-direction: column;
+    background: #ffffff;
+    display: flex;
+    @media only screen and (min-width: 993px) {
+        // min-width: 18rem;
+        // width: 18rem;
+        padding: calc(4rem + 1.5rem) 1.25rem 1rem;
+        height: 100vh !important;
+        min-width: 21.875rem;
+        width: 21.875rem;
+    }
+    @media only screen and (max-width: 992px) {
+        order: 1;
+        // width: 15.625rem;
+        // min-width: 15.625rem;
+        height: 250px !important;
+        padding: 1rem 1.25rem;
+        min-width: 100%;
+        width: 100%;
+    }
+}
+
+.page-content {
+    @media only screen and (max-width: 992px) {
+        overflow: visible;
+        order: 3;
+    }
+}
+
+.go-home-button {
+    color: var(--hex-quaternary-palette);
+}
+
+.go-home-button:active,
+.go-home-button:focus,
+.go-home-button:hover {
+    color: var(--hex-quaternary-palette);
+}
+
+.logout-button {
+    transition: all 180ms ease;
+    background: var(--hex-quaternary-palette);
+}
+
+.logout-button:active,
+.logout-button:focus,
+.logout-button:hover {
+    background: rgba(var(--quaternary-palette), 0.9);
+    box-shadow: 0.125rem 0.5rem 1.25rem #41414196;
+}
+
+.image-filter {
+    filter: invert(24%) sepia(12%) saturate(352%) hue-rotate(202deg) brightness(90%) contrast(88%);
+}
+
+.card.meet-card {
+    background: var(--hex-quaternary-palette);
+    border-bottom: 0.0625rem solid #e6e6e6;
+}
+
+.card.meet-card > .card-body > .card > .card-title > :first-child {
+    background-color: var(--hex-quaternary-palette);
+    --selected-palette: 207, 207, 207;
+    border-color: currentColor;
+}
+
+.card.meet-card:hover > .card-body > .card > .card-title > :first-child,
+.card.meet-card:focus > .card-body > .card > .card-title > :first-child {
+    --selected-palette: var(--nonary-palette);
+}
+
+.card.meet-card > .card-body > .card > .card-title > :first-child:hover,
+.card.meet-card > .card-body > .card > .card-title > :first-child:focus {
+    background-color: rgb(var(--nonary-palette, #ffffff));
+    color: var(--hex-quaternary-palette);
+}
+
+#second-section {
+    position: relative;
+    /* overflow: hidden; */
+    height: 100%;
+}
+@media only screen and (max-width: 992px) {
+    #second-section {
+        overflow: visible;
+    }
+    #second-section > :first-child {
+        position: relative !important;
+    }
+}
+
+.loader-pointer-container {
+    display: flex;
+}
+
+.loader-pointer {
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    transform: translateY(0);
+    animation-duration: 1.75s;
+    background: #000000;
+    animation-name: jump;
+    border-radius: 50%;
+    height: 0.5rem;
+    width: 0.5rem;
+}
+
+.loader-pointer:nth-child(2) {
+    animation-delay: calc(1.75s * 0.1);
+}
+
+.loader-pointer:nth-child(3) {
+    animation-delay: calc(1.75s * 0.2);
+}
+
+.loader-pointer:not(:last-child) {
+    margin-right: 0.5rem;
+}
+
+@keyframes jump {
+    0% {
+        transform: translateY(0);
+    }
+    25% {
+        transform: translateY(-125%);
+    }
+    50% {
+        transform: translateY(0%);
+    }
+    100% {
+        transform: translateY(0%);
+    }
+}
+
+.spinner-border {
+    animation: 1s ease-in-out infinite spinner-border !important;
+}
+
+ul.primary-list.power-list li {
+    flex-wrap: nowrap;
+}
+
+ul.primary-list.power-list > li:last-child {
+    border-bottom: 0.0625rem solid #cbcbcb;
+}
+
+ul.primary-list.power-list li > :last-child {
+    font-size: 0.6875rem;
+    text-align: center;
+    min-width: 6.25rem;
+    color: #545454;
+}
+
+.meet-link {
+    word-break: break-word;
+    color: #9d9d9d;
+}
+
+.meet-link:hover {
+    color: #ffffff;
+}

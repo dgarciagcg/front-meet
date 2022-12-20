@@ -1,0 +1,64 @@
+table {
+  width: auto;
+}
+
+table thead tr th {
+  font-size: 0.8rem;
+}
+
+table tbody tr td {
+  font-size: 0.8rem;
+}
+
+tbody tr:last-child td,
+thead th {
+  border-style: none;
+}
+
+table,
+table.table {
+  margin-bottom: 0;
+}
+
+td p,
+th p {
+  margin: 0;
+}
+
+td b,
+th b {
+  font-size: 0.76rem;
+}
+
+td .btn:not(.round-btn) {
+  padding: 0 0.375rem;
+  color: #ffffff;
+  display: block;
+}
+
+td .btn:not(.round-btn).disabled {
+  opacity: 1;
+}
+
+table.primary-table th,
+table.primary-table td {
+  padding-bottom: 1rem;
+  padding-top: 1rem;
+  font-weight: 600;
+}
+
+table.primary-table th {
+  font-size: 0.8rem;
+  color: #171717;
+}
+
+table.primary-table td {
+  font-size: 0.6875rem;
+  text-align: center;
+  color: #545454;
+}
+
+table.primary-table tr > td,
+table.primary-table tr > th {
+  border-bottom: 0.0625rem solid #cbcbcb;
+}

@@ -1,0 +1,132 @@
+.group-card {
+  cursor: pointer;
+  border: none;
+}
+
+.group-card::after {
+  background-image: inherit;
+  background-size: cover;
+}
+
+.meet-list-item {
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+  width: 100%;
+}
+
+.meet-list-item::after {
+  height: calc(100% + 0.5rem + 0.0625rem);
+  width: calc(100% + 1.32rem);
+  position: absolute;
+  left: -0.66rem;
+  top: -0.5rem;
+  content: "";
+}
+
+.meet-list-item.active::after,
+.meet-list-item:hover::after {
+  background: var(--hex-octonary-palette);
+}
+
+.meet-list-item:not(:last-child) {
+  border-bottom: 0.0625rem solid #efefef;
+}
+
+.meet-list-item > :first-child {
+  position: relative;
+  z-index: 1;
+}
+
+ul.primary-list.meet-options {
+  min-width: 8rem;
+  padding: 0;
+}
+
+ul.primary-list.meet-options > li {
+  color: var(--hex-tertiary-palette);
+  border-bottom: none;
+  font-size: 0.66rem;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+ul.primary-list.meet-options > li:hover {
+  background: var(--hex-secondary-palette);
+}
+
+// ul.primary-list.summon-list-preview > li,
+ul.primary-list.summon-list > li {
+  align-items: center;
+  flex-wrap: nowrap;
+  font-weight: 600;
+}
+
+ul.primary-list.summon-list-preview li {
+  text-transform: uppercase;
+  padding-bottom: 0.5rem;
+  padding-top: 0.5rem;
+  align-items: center;
+  font-weight: 600;
+}
+
+ul.primary-list.summon-list > li {
+  padding-bottom: 0.5rem;
+  padding-top: 0.5rem;
+}
+
+ul.primary-list.summon-list > li:last-child {
+  border-bottom: 0.0625rem solid #cbcbcb;
+}
+
+ul.primary-list.summon-list-preview li > :last-child:not(:first-child),
+ul.primary-list.summon-list li > :first-child:last-child {
+  color: var(--hex-tertiary-palette);
+  font-size: 0.6875rem;
+  text-align: center;
+  min-width: 6.25rem;
+}
+
+ul.primary-list.summon-list li > input:last-child:not(:first-child) {
+  font-size: 0.6875rem;
+  text-align: left;
+  width: 20rem;
+}
+
+ul.primary-list.summon-list li > :first-child:not(:last-child) {
+  margin-right: 0.5rem;
+  flex: 0 0 auto;
+}
+
+ul.primary-list.programming-list li > ul.primary-list > li {
+  padding-left: 2.5rem;
+}
+
+ul.primary-list.programming-list > li > ul.primary-list > li:not(.first-lvl)::before {
+  left: 1rem;
+}
+
+.send-invitation-btn {
+  border: 0.0625rem solid #e6e6e6;
+  background: #ffffff;
+}
+
+.send-invitation-btn:hover {
+  background: var(--hex-tertiary-palette);
+}
+
+.send-invitation-btn > :nth-child(1) {
+  color: #000000;
+}
+
+.send-invitation-btn > :nth-child(2) {
+  color: var(--hex-tertiary-palette);
+}
+
+.send-invitation-btn:hover > :nth-child(1) {
+  color: #ffffff;
+}
+
+.send-invitation-btn:hover > :nth-child(2) {
+  color: #ffffff;
+}

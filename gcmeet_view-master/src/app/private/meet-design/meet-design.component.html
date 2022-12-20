@@ -1,0 +1,198 @@
+<div class="page-content pretty-scrollbar">
+    <h6 class="page-title text-style margin-bottom-0">Gestionar reuniones</h6>
+    <a routerLink="/private/meets/listar" class="display-inline-flex align-items-center mt-3">
+        <i class="fas fa-chevron-left me-2"></i>
+        <span class="font-weight-700">Atrás</span>
+    </a>
+
+    <section class="mt-2 ms-2 me-2 bg-quaternary pt-4 pb-4 ps-5 pe-5">
+        <!-- Reunión -->
+        <article>
+            <div style="text-align: center;" *ngIf="grupo?.logo">
+                <img [src]="env.root + grupo.logo" style="height: 7.8125rem;">
+            </div>
+
+            <form id="meet-management-form" [formGroup]="formularioReunion">
+                <div class="mt-3" style="position: relative;">
+                    <!-- (click)="cargarTodo()" -->
+                    <select class="form-select meet-type-fc" formControlName="titulo">
+                        <option value="" hidden>[ Tipo de reunión ] *</option>
+                        <ng-container *ngFor="let tipoReunion of tiposReuniones; let i = index">
+                            <option [value]="tipoReunion.titulo" (click)="asignar(tipoReunion.titulo)">
+                                {{tipoReunion.titulo}}</option>
+                        </ng-container>
+                    </select>
+                </div>
+
+                <div class="mt-4">
+                    <span class="me-3 text-transform-uppercase txt-word"><b>A celebrarse el día:</b></span>
+                    <input class="form-control date-type-fc" formControlName="fecha_reunion"
+                        placeholder="Fecha de la reunión" type="date" appTooltip="Fecha de la reunión"
+                        (dateChange)="cambiarFecha($event)">
+                </div>
+
+                <div class="mt-3">
+                    <textarea appTextareaHeight rows="1" type="text" class="default-type-fc"
+                        formControlName="descripcion" placeholder="[ Agregar una descripción ] (Opcional)"></textarea>
+                </div>
+            </form>
+        </article>
+
+        <!-- Convocatoria -->
+        <article>
+            <!-- Convocados -->
+            <section class="mt-4">
+                <div class="display-flex align-items-center" style="justify-content: space-between;">
+                    <h6 class="txt-word text-transform-uppercase m-0">Convocatoria: </h6>
+
+                    <button class="btn filled-btn pt-primary" data-bs-target="#summon-modal" data-bs-toggle="modal"
+                        (click)="formularioAgregarAsistente.get('tipo')?.setValue('0'); autocompletar('', '0');">
+                        <i class="fas fa-plus-square me-2"></i>
+                        <span style="line-height: 1.25;">Agregar</span>
+                    </button>
+                </div>
+
+                <ul class="width-100 primary-list mt-2 summon-list-preview padding-left-50rem-i"
+                    id="summon-preview-participants">
+                    <ng-container *ngFor="let convocado of (arrayConvocadosA | sortSummon); let i = index">
+                        <li>
+                            <div class="width-100">{{ convocado.razon_social || convocado.nombre || '' }}</div>
+                            <div *ngIf="convocado.razon_social"><small>{{ convocado.nombre }}</small></div>
+                        </li>
+                    </ng-container>
+                    <ng-container *ngIf="!arrayConvocadosA.length">
+                        <li>No hay convocados</li>
+                    </ng-container>
+
+                </ul>
+            </section>
+            <!-- Invitados -->
+            <section class="mt-4">
+                <div class="display-flex align-items-center" style="justify-content: space-between;">
+                    <h6 class="txt-word text-transform-uppercase m-0">Invitados: </h6>
+
+                    <button class="btn filled-btn pt-primary" data-bs-target="#summon-modal" data-bs-toggle="modal"
+                        (click)="formularioAgregarAsistente.get('tipo')?.setValue('1'); autocompletar('', '1');">
+                        <i class="fas fa-plus-square me-2"></i>
+                        <span style="line-height: 1.25;">Agregar</span>
+                    </button>
+                </div>
+
+                <ul class="width-100 primary-list mt-2 summon-list-preview padding-left-50rem-i"
+                    id="summon-preview-participants">
+                    <ng-container *ngFor="let convocado of (arrayConvocadosI | sortSummon); let i = index">
+                        <li>
+                            <div>{{ convocado.nombre }}</div>
+                        </li>
+                    </ng-container>
+                    <ng-container *ngIf="!arrayConvocadosI.length">
+                        <li>No hay invitados</li>
+                    </ng-container>
+
+                </ul>
+            </section>
+        </article>
+
+        <!-- Programación -->
+        <article>
+            <div class="mt-4">
+                <h6 class="txt-word text-transform-uppercase m-0">Orden del día: </h6>
+
+                <form [formGroup]="formularioAgregarProgramas">
+                    <ng-container formArrayName="programas">
+                        <ng-container
+                            *ngFor="let program of (formularioAgregarProgramas.get('programas') | getFormArray).controls; index as i;">
+                            <div class="mt-5" [formGroupName]="i">
+                                <!-- Orden y programa -->
+                                <div class="display-flex align-items-flex-end">
+                                    <input class="form-control order-type-fc black-input" type="number" min="1"
+                                        [ngStyle]="{ width: ((formularioAgregarProgramas.get('programas') | getFormArray).controls.length.toString().length + 1) + 'rem' }"
+                                        [max]="(formularioAgregarProgramas.get('programas') | getFormArray).controls.length"
+                                        (change)="updateProgramOrder(i)" formControlName="orden">
+                                    <span class="ps-1 pe-2 order-separator">-</span>
+                                    <textarea appTextareaHeight rows="1" type="text" formControlName="titulo"
+                                        class="default-type-fc p-0 program-fc black-input"
+                                        placeholder="[ Modificar pregunta ]"></textarea>
+                                </div>
+                                <!-- Descripción -->
+                                <div class="mt-3"
+                                    [ngStyle]="{ marginLeft: ((formularioAgregarProgramas.get('programas') | getFormArray).controls.length.toString().length + 1) + 1 + 'rem' }">
+                                    <textarea appTextareaHeight rows="1" type="text" formControlName="descripcion"
+                                        placeholder="[ Amplíe la información de la pregunta ] (Opcional)"
+                                        class="default-type-fc p-0 program-description-fc"></textarea>
+
+                                    <!-- Tipo de respuesta -->
+                                    <h6 class="mt-3">Respuesta esperada:</h6>
+
+                                    <!-- Opciones -->
+                                    <ng-container formGroupName="opciones">
+                                        <h6 class="mt-3">Opciones:</h6>
+                                        <ng-container formArrayName="listadoOpciones">
+                                            <ng-container
+                                                *ngFor="let option of (program.get('opciones')?.get('listadoOpciones') | getFormArray).controls; index as j;">
+                                                <div [ngClass]="[!j ? 'mt-3' : 'mt-5']" [formGroupName]="j">
+                                                    <div class="display-flex align-items-flex-end">
+                                                        <input class="form-control order-type-fc" type="number"
+                                                            [ngStyle]="{ width: ((program.get('opciones')?.get('listadoOpciones') | getFormArray).controls.length.toString().length + 1) + 'rem' }"
+                                                            [max]="(program.get('opciones')?.get('listadoOpciones') | getFormArray).controls.length"
+                                                            (change)="updateOptionOrder(i, j)" formControlName="orden"
+                                                            min="1">
+                                                        <span class="ps-1 pe-2 order-separator">-</span>
+                                                        <textarea appTextareaHeight rows="1" type="text"
+                                                            [class]="'default-type-fc p-0 option-fc ofc-' + i"
+                                                            placeholder="[ Modificar pregunta ]"
+                                                            formControlName="titulo"></textarea>
+                                                    </div>
+
+                                                    <div class="mt-3"
+                                                        [ngStyle]="{ marginLeft: ((program.get('opciones')?.get('listadoOpciones') | getFormArray).controls.length.toString().length + 1) + 1 + 'rem' }">
+                                                        <textarea appTextareaHeight rows="1" type="text"
+                                                            placeholder="[ Amplíe la información de la opción ] (Opcional)"
+                                                            [class]="'default-type-fc p-0 option-description-fc odfc-' + i"
+                                                            formControlName="descripcion"></textarea>
+                                                    </div>
+                                                </div>
+                                            </ng-container>
+                                        </ng-container>
+
+                                        <!-- Añadir opción -->
+                                        <div [ngClass]="[(program.get('opciones')?.get('listadoOpciones') | getFormArray).controls.length ? 'mt-5' : 'mt-3']"
+                                            class="display-flex align-items-flex-end">
+                                            <input class="form-control order-type-fc" type="number"
+                                                [ngStyle]="{ width: (((program.get('opciones')?.get('listadoOpciones') | getFormArray).controls.length + 1).toString().length + 1) + 'rem' }"
+                                                [max]="(program.get('opciones')?.get('listadoOpciones') | getFormArray).controls.length"
+                                                formControlName="opcion_orden" min="1">
+                                            <span class="ps-1 pe-2 order-separator">-</span>
+                                            <textarea appTextareaHeight rows="1" type="text" class="default-type-fc p-0"
+                                                [id]="'option-adder-' + i" (change)="agregarOpcion(i)"
+                                                placeholder="[ Agregar una pregunta ] (Opcional)"
+                                                formControlName="opcion_titulo"></textarea>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+                    <!-- Añadir programa -->
+                    <div class="mt-5 display-flex align-items-flex-end">
+                        <input class="form-control order-type-fc black-input" type="number" formControlName="orden"
+                            [ngStyle]="{ width: (((formularioAgregarProgramas.get('programas') | getFormArray).controls.length + 1).toString().length + 1) + 'rem' }"
+                            [max]="(formularioAgregarProgramas.get('programas') | getFormArray).controls.length"
+                            min="1">
+                        <span class="ps-1 pe-2 order-separator">-</span>
+                        <textarea appTextareaHeight rows="1" type="text" class="default-type-fc p-0 black-input"
+                            id="program-adder" (change)="agregarPrograma()" formControlName="titulo"
+                            placeholder="[ Agregar una pregunta ] (Opcional)"></textarea>
+                    </div>
+                </form>
+            </div>
+        </article>
+    </section>
+
+    <!-- Modal Convocar -->
+    <app-summon-management [formularioAgregarAsistente]="formularioAgregarAsistente"
+        [recursosGc_MeetYGcm]="recursosGc_MeetYGcm" [autocompletarPorNit]="autocompletarPorNit" [entidades]="entidades"
+        [agregarAsistente]="agregarAsistente" [autocompletar]="autocompletar" [arrayRoles]="[]">
+    </app-summon-management>
+
+</div>

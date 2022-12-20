@@ -1,0 +1,35 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+    <label class="position-relative pe-3 form-check mt-2" style="min-height: 1rem;" *ngFor="let item of opciones;">
+        <input class="form-check-input me-2" formControlName="opcion" type="radio" [value]="item.id_programa" />
+        <span class="form-check-label cursor-pointer" style="line-height: 1.25rem;">
+            {{ +$any(program).tipo === 5 ? item.descripcion : item.titulo }}
+        </span>
+
+        <ng-container *ngIf="item.archivos.length">
+            <i class="far fa-file-pdf cursor-pointer dropdown-trigger position-absolute top-0 right-0 z-index-1"
+                tabindex="0" [attr.data-target]="'file-dwn-' + item.id_programa"
+                [appDropdownMaterialize]="'#page-content-reunion'"></i>
+
+            <!-- Dropdown Structure -->
+            <ul class='dropdown-content' [id]="'file-dwn-' + item.id_programa">
+                <ng-container *ngFor="let archivo of item.archivos">
+                    <li>
+                        <a [href]="(storage + archivo.url) | safeUrl" download target="_blank">
+                            {{archivo.descripcion}}
+                        </a>
+                    </li>
+                </ng-container>
+            </ul>
+        </ng-container>
+    </label>
+    <label class="position-relative pe-3 form-check mt-2" style="min-height: 1rem;">
+        <input class="form-check-input me-2" formControlName="opcion" type="radio" [value]="0" />
+        <span class="form-check-label cursor-pointer" style="line-height: 1.25rem;">Rechazar</span>
+    </label>
+    <button class="btn mt-2 response-element" type="submit" style="padding: 0.25rem 0.75rem;" *ngIf="quorum">
+        Confirmar
+    </button>
+    <p class="mt-2 mb-0 cl-primary bg-warning p-1 display-inline-block rounded-border" *ngIf="!quorum">
+        Esperando el quorum necesario
+    </p>
+</form>

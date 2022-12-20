@@ -1,0 +1,80 @@
+<div class="page-content">
+  <div class="grow grid-grow" style="grid-row-gap: 0; grid-auto-rows: 1fr;">
+    <div style="background-image: url(assets/img/landing/background.jpg);"
+      class="gcol gcol-s12 offset-gcol-s1 grow-s1-4 background-size-cover background-position-center background-repeat-no-repeat">
+      <div class="display-flex align-items-center" style="height: 66%;">
+        <h3 style="padding: 0 3rem 3rem;" class="text-align-center width-100 margin-0 cl-quaternary">
+          <span class="font-weight-400">GC</span>meet
+        </h3>
+      </div>
+    </div>
+    <div class="gcol gcol-s8 gcol-m6 offset-gcol-m4 offset-gcol-s3 grow-s4-2 align-self-center">
+      <div class="display-flex">
+        <div class="login-card" data-bs-toggle="modal" data-bs-target="#get-meets-modal">
+          <img src="assets/img/icons/meet.png">
+          <p>Ingresar a una reunión</p>
+        </div>
+        <a class="login-card" routerLink="/public/login">
+          <img src="assets/img/icons/user.png">
+          <p>Iniciar sesión</p>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- modal enviar correo -->
+  <div class="modal fade" id="get-meets-modal" tabindex="-1" aria-labelledby="get-meets-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="get-meets-modal-label">Reuniones</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>
+            Ingresa tu número de identificación y te enviaremos un correo electrónico con la lista de las reuniones a
+            las que estás convocado con su respectivo acceso
+          </p>
+          <form (submit)="enviarInvitacion()">
+            <div class="input-group">
+              <input class="form-control" type="text" name="identification" placeholder="Número de identificación"
+                required [(ngModel)]="documentoIdentidad">
+              <button type="submit" class="input-group-text">
+                <span class="margin-right-50rem">Enviar</span>
+                <i class="fas fa-paper-plane"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal correo enviado -->
+  <div class="modal fade" id="meeting-sent-modal" tabindex="-1" aria-labelledby="meeting-sent-modal-label"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="meeting-sent-modal-label">Correo enviado</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body padding-100rem" *ngIf="searchResult !== undefined">
+          <p class="margin-100rem" *ngIf="searchResult">
+            Hemos enviado un correo electrónico a la dirección que tienes registrada
+          </p>
+          <p class="margin-100rem" *ngIf="!searchResult">
+            Usted no ha sido convocado a ninguna reunión
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="landing-footer">
+    COPYRIGHT 2021 GARANTÍAS COMUNITARIAS
+  </footer>
+</div>
+
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="square-jelly-box" [fullScreen]="true">
+  <p style="color: white"> Cargando... </p>
+</ngx-spinner>

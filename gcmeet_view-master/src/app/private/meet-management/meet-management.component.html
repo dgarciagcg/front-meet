@@ -1,0 +1,507 @@
+<div class="page-content pretty-scrollbar">
+
+  <!-- Seccion principal de la vista de crear/modificar donde encontramos los datos propios de la reunion -->
+  <section>
+    <h6 class="page-title text-style margin-bottom-0">Gestionar reuniones</h6>
+    <a routerLink="/private/meets" class="display-inline-flex align-items-center mt-3">
+      <i class="fas fa-chevron-left me-2"></i>
+      <span class="font-weight-700">Atrás</span>
+    </a>
+    <!-- Formulario reunion -->
+    <form id="meet-management-form" class="row" [formGroup]="formularioReunion">
+      <div class="col-sm-12 col-lg-5">
+        <div class="height-100 position-relative overflow-auto pretty-scrollbar" style="min-height: 10rem;">
+          <div class="position-absolute top-0 left-0 width-100 padding-right-50rem" style="padding-left: 0.25rem;">
+            <!-- ngFor -->
+
+            <label class="input-group mt-2 custom-form-control">
+              <span class="input-group-text"><i class="fas fa-search"></i></span>
+              <input type="text" class="form-control" #filter (keyup)="filtroTipoReuniones(filter.value)"
+                placeholder="Buscar" [value]="searchFilter">
+            </label>
+
+            <!-- Tipos de reuniones con el filtro -->
+            <ng-container *ngFor="let tipoReunion of tiposReunionesFilter; let i = index">
+              <div class="card secondary-card meet-type-card align-items-center"
+                [ngClass]="{'active': id_tipo_reunion === tipoReunion.id_tipo_reunion}">
+                <div class="card-title" style="margin: 0 0.25rem 0;">
+                  <img [src]="tipoReunion.imagen" class="rounded-border" style="height: 3rem;">
+                </div>
+                <div class="card-body">
+                  <div class="card secondary-card reverse-card align-items-center">
+                    <div class="card-title" style="margin: 0;">
+                      <button (click)="asignar(tipoReunion.id_tipo_reunion)" class="btn smr-round-btn card-btn"
+                        data-bs-toggle="modal" data-bs-target="#meet-type-confirm-modal">
+                        <i class="fas fa-long-arrow-alt-right block" style="width: 1rem; height: 1rem;"></i>
+                      </button>
+                    </div>
+                    <div class="card-body">
+                      <p class="title-style margin-0">{{ tipoReunion.titulo }}</p>
+                      <p class="margin-0" style="font-size: 0.55rem;">{{ grupo?.descripcion }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+
+            <div class="card secondary-card meet-type-card align-items-center"
+              [ngClass]="{'active': id_tipo_reunion === undefined}">
+              <div class="card-title" style="margin: 0 0.25rem 0;">
+                <img src="assets/img/meet-management/background-5.png" class="rounded-border" style="height: 3rem;">
+              </div>
+              <div class="card-body">
+                <div class="card secondary-card reverse-card align-items-center">
+                  <div class="card-title" style="margin: 0;">
+                    <button (click)="asignar(undefined)" class="btn smr-round-btn card-btn">
+                      <i class="fas fa-long-arrow-alt-right block" style="width: 1rem; height: 1rem;"></i>
+                    </button>
+                  </div>
+                  <div class="card-body">
+                    <p class="title-style margin-0">Otros</p>
+                    <p class="margin-0" style="font-size: 0.55rem;">{{ grupo?.descripcion }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- /ngFor -->
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-12 col-lg-7">
+        <input [attr.disabled]="id_tipo_reunion !== undefined ? 'true' : null" class="form-control shadowed mt-2"
+          type="text" formControlName="titulo" placeholder="Nombre del tipo de reunión *">
+        <input required class="form-control shadowed mt-2" type="date" formControlName="fecha_reunion"
+          (dateChange)="cambiarFecha($event)">
+        <input required class="form-control shadowed mt-2" type="time" formControlName="hora">
+        <textarea class="form-control shadowed mt-2" formControlName="descripcion" placeholder="Descripción"></textarea>
+      </div>
+
+      <!-- Checkbox para definir el Quorum -->
+      <div class="col-sm-4 col-lg-4 mt-3">
+        <div class="card cards-medio">
+          <div class="form-check form-switch form-switch-inverted mt-2"
+            style="padding-top: 5px; padding-bottom: 10px; padding-left: 10px; text-align: left;">
+            <label class="form-check-label">
+              <input style="margin-right: 9px;" class="form-check-input form-check-switch" type="checkbox"
+                formControlName="quorum" (change)="toggleParticipation($any($event.target).checked)">
+              <span class="me-1">Decisiones por Quorum</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Checkbox para definir si la reunion necesita programacion firmada -->
+      <div class="col-sm-4 col-lg-4 mt-3" style="padding: 0;">
+        <div class="card cards-medio">
+          <div class="form-check form-switch form-switch-inverted mt-2"
+            style="padding-top: 5px; padding-bottom: 10px; padding-left: 10px; padding-right: 0px; text-align: left;">
+            <label class="form-check-label">
+              <input style="margin-right: 9px;" class="form-check-input form-check-switch" type="checkbox"
+                formControlName="checkProgramacionFirmada">
+              <span class="me-1">¿Requiere orden del día firmado?</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Checkbox para definir si la reunion necesita acta -->
+      <div class="col-sm-4 col-lg-4 mt-3">
+        <label class="position-relative w-100 h-100">
+          <div class="position-absolute">¿Requiere acta?</div>
+          <select class="form-select h-100" formControlName="id_acta">
+            <option value="0" selected>No requiere acta</option>
+            <option [value]="item.id_acta" *ngFor="let item of actas">{{item.descripcion}}</option>
+          </select>
+        </label>
+      </div>
+
+      <!-- Espacio para anexar el archivo de la programacion firmada -->
+      <div class="mt-3" *ngIf="formularioReunion.get('checkProgramacionFirmada')?.value">
+        <label class="secondary-input-file file-select">
+          <h6 style="background: #ebebeb; margin: 0;">Adjuntar archivo</h6>
+          <i class="fas fa-cloud-upload-alt block width-auto"
+            style="font-size: 2.6rem; background: transparent; color: #171717; margin-bottom: 10px;"></i>
+          <p *ngIf="formularioReunion.value.programacion?.name"><small
+              style="font-size: 12px;"><b>{{formularioReunion.value.programacion.name}}</b></small></p>
+          <p *ngIf="!formularioReunion.value.programacion?.name && validaExistenciaFirmaProgramacion"><small
+              style="font-size: 12px;"><b>Ya subiste un archivo</b></small></p>
+          <p *ngIf="!formularioReunion.value.programacion?.name && validaVacioFirmaProgramacion"><small
+              style="font-size: 12px;"><b style="color: #F93245;">Aun no has adjuntado el orden del día
+                firmado</b></small></p>
+          <p style="color: #545454;">Arrástra aquí o <span style="color: #9F8C5B;">búscala en tu
+              computador</span></p>
+          <input type="file" name="files" accept=".png, .jpg, .jpeg, .pdf" (change)="onFileChange($event)">
+        </label>
+      </div>
+
+    </form>
+  </section>
+
+  <!-- Seccion secundario de la vista de crear/modificar donde encontramos el recuadro de convocados y el programacion -->
+  <section class="row row-margin">
+    <!-- Convocatoria -->
+    <article class="col-sm-12 col-lg-6 mt-3">
+      <div class="card quinary-card height-100">
+        <div class="card-title">
+          <i class="fas fa-user block me-2"></i>
+          <h6 class="margin-0 line-height-1">Convocatoria</h6>
+        </div>
+        <button class="btn sm-round-btn outline-btn pt-primary floating-btn" data-bs-toggle="modal"
+          data-bs-target="#summon-modal" title="Editar contenido de los convocados">
+          <!-- ngIf -->
+          <i class="fas block"
+            [ngClass]="[arrayConvocadosA.length + arrayConvocadosI.length > 0 ? 'fa-pencil-alt' : 'fa-plus']"></i>
+          <!-- /ngIf -->
+        </button>
+        <div class="card-body position-relative pretty-scrollbar overflow-auto"
+          style="min-height: 22.5rem; max-height: 22.5rem;">
+          <!-- si hay convocados -->
+          <ng-container *ngIf="arrayConvocadosA.length > 0 || arrayConvocadosI.length > 0">
+            <h6 class="margin-0">Participantes</h6>
+            <ul class="width-100 primary-list mt-2 summon-list-preview padding-left-50rem-i"
+              id="summon-preview-participants">
+              <ng-container *ngIf="arrayConvocadosA.length === 0">
+                <li>
+                  <div>
+                    No hay participantes
+                  </div>
+                </li>
+              </ng-container>
+              <!-- ngFor -->
+              <ng-container *ngFor="let convocado of arrayConvocadosA; let i = index">
+                <li>
+                  <div class="width-100">{{ convocado.nombre }}</div>
+                  <div>{{ convocado.rol }}</div>
+                </li>
+              </ng-container>
+              <!-- /ngFor -->
+            </ul>
+
+            <h6 class="margin-bottom-0 mt-3">Invitados</h6>
+            <ul class="width-100 primary-list mt-2 summon-list-preview padding-left-50rem-i"
+              id="summon-preview-invited">
+              <ng-container *ngIf="arrayConvocadosI.length === 0">
+                <li>
+                  <div>
+                    No hay invitados
+                  </div>
+                </li>
+              </ng-container>
+              <!-- ngFor -->
+              <ng-container *ngFor="let convocado of arrayConvocadosI; let i = index">
+                <li>
+                  <div class="width-100">{{ convocado.nombre }}</div>
+                  <div>{{ convocado.rol }}</div>
+                </li>
+              </ng-container>
+              <!-- /ngFor -->
+            </ul>
+          </ng-container>
+          <!-- /si hay convocados -->
+          <!-- si no hay convocados -->
+          <div class="width-100 height-100 display-flex align-items-center justify-content-center flex-direction-column"
+            *ngIf="arrayConvocadosA.length === 0 && arrayConvocadosI.length === 0">
+            <img src="assets/img/meet-management/not-summoned.png" class="width-25">
+            <p class="font-weight-700 mt-3">Aún no hay convocados</p>
+          </div>
+          <!-- /si no hay convocados -->
+        </div>
+      </div>
+    </article>
+    <!-- Programación -->
+    <article class="col-sm-12 col-lg-6 mt-3">
+      <div class="card quinary-card height-100">
+        <div class="card-title">
+          <i class="far fa-list-alt block me-2"></i>
+          <h6 class="margin-0 line-height-1 width-100">Orden del día</h6>
+        </div>
+        <button class="btn sm-round-btn outline-btn pt-primary floating-btn" data-bs-toggle="modal"
+          data-bs-target="#programming-modal" title="Editar contenido del orden del día">
+          <!-- ngIf -->
+          <i class="fas block" [ngClass]="[programas.length > 0 ? 'fa-pencil-alt' : 'fa-plus']"></i>
+          <!-- /ngIf -->
+        </button>
+
+        <!-- *ngIf="programas.length > 0" -->
+        <button *ngIf="programas.length > 0" class="btn sm-round-btn outline-btn pt-primary floating-btn2"
+          title="Descargar orden del día">
+          <i class="fas fa-file-download block" (click)="downloadPDFProgramming()"></i>
+        </button>
+
+        <div class="card-body position-relative pretty-scrollbar overflow-auto" id="htmlData"
+          style="min-height: 22.5rem; max-height: 22.5rem; padding-top: 0; padding-bottom: 0;">
+          <!-- si hay programación -->
+          <ng-container *ngIf="programas.length > 0">
+            <!-- ngFor -->
+            <ul class="primary-list" id="programming-preview">
+              <ng-container *ngFor="let programa of programas; let i = index">
+                <!-- ngClass -->
+                <li [ngClass]="{'pb-0': programa.opciones.listadoOpciones!.length > 0}">
+                  {{ i+1 }}. {{ programa.titulo }}
+                  <!-- ngIf (si tiene opciones) -->
+                  <ng-container *ngIf="programa.opciones.listadoOpciones!.length > 0">
+                    <ul class="primary-list">
+                      <!-- ngFor -->
+                      <ng-container *ngFor="let opcion of programa.opciones.listadoOpciones; let ix = index">
+                        <li>{{ix | letrasOrdenadas}}. {{ +programa.tipo === 5 ? opcion.descripcion : opcion.titulo }}
+                        </li>
+                      </ng-container>
+                      <!-- /ngFor -->
+                    </ul>
+                  </ng-container>
+                  <!-- /ngIf -->
+                </li>
+              </ng-container>
+            </ul>
+            <!-- /ngFor -->
+          </ng-container>
+          <!-- /si hay programación -->
+          <!-- si no hay programación -->
+          <div class="width-100 height-100 display-flex align-items-center justify-content-center flex-direction-column"
+            *ngIf="programas.length === 0">
+            <img src="assets/img/meet-management/not-programming.png" class="width-25">
+            <p class="font-weight-700 mt-3">Aún no se ha definido el orden del día</p>
+          </div>
+          <!-- /si no hay programación -->
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- Boton para guardar la reunion completa -->
+  <div class="mt-4 col-12">
+    <button type="submit" class="btn width-100" (click)="validateFields()" title="Guardar reunión">
+      <i class="fas fa-save me-2"></i>
+      <span>Guardar</span>
+    </button>
+  </div>
+
+  <!-- modal convocados -->
+  <div class="modal fade" id="summon-modal" tabindex="-1" aria-labelledby="summon-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="summon-modal-label">Convocatoria</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body pretty-scrollbar" style="padding: 1rem;">
+          <app-convocatoria [arrayConvocadosA]="arrayConvocadosA" [arrayConvocadosI]="arrayConvocadosI"
+            [formularioAgregarAsistente]="formularioAgregarAsistente" [agregarAsistente]="agregarAsistente"
+            [autocompletar]="autocompletar" [recursosGc_MeetYGcm]="recursosGc_MeetYGcm" [arrayRoles]="arrayRoles"
+            [autocompletarPorNit]="autocompletarPorNit" [entidades]="entidades" [containsFiles]="containsFiles"
+            [getRealContainer]="getRealContainer" [getTargetContainer]="getTargetContainer"
+            [formularioReunion]="formularioReunion" [allowDropItem]="allowDropItem" [seItemDropArea]="seItemDropArea"
+            (eliminado)="eliminado = $event">
+          </app-convocatoria>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /modal convocados -->
+
+  <!-- modal programación -->
+  <div class="modal fade" id="programming-modal" tabindex="-1" aria-labelledby="programming-modal-label"
+    aria-hidden="true">
+    <div class="modal-dialog modal-medium modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="programming-modal-label">Editar orden del día</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding: 1rem 1rem 4rem;">
+          <app-programacion [getRealContainer]="getRealContainer" [getTargetContainer]="getTargetContainer"
+            (removerRecursoActaEmitter)="recursoActaToRemove = $event; openModal('#recurso-acta-remove-confirm-modal', '#programming-modal')"
+            [removeArchivo]="removeArchivo" [agregarOpcion]="agregarOpcion" [agregarRecursoActa]="agregarRecursoActa"
+            (eliminado)="programaEliminado = $event" [dataCompleta]="arrayConvocadosA" [rolesActas]="rolesActas"
+            [agregarPrograma]="agregarPrograma" [detectFiles]="detectFiles" [containsFiles]="containsFiles"
+            [formularioReunion]="formularioReunion" [cancelarModificacion]="cancelarModificacion"
+            [programacion]="formularioAgregarProgramas" [seItemDropArea]="seItemDropArea">
+          </app-programacion>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /modal programación -->
+
+  <!-- Modal confirmar eliminación recurso acta -->
+  <div class="modal fade" id="recurso-acta-remove-confirm-modal" tabindex="-1"
+    aria-labelledby="recurso-acta-remove-confirm-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="recurso-acta-remove-confirm-modal-label">Cancelar postulación</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding: 1rem;">
+          <p class="text-align-center margin-0">
+            ¿Desea cancelar la postulación?
+          </p>
+        </div>
+        <div class="modal-footer border-top-none">
+          <button class="btn outline-btn small-btn pt-tertiary"
+            (click)="openModal('#programming-modal', '#recurso-acta-remove-confirm-modal')">
+            Cancelar
+          </button>
+          <button class="btn filled-btn small-btn pt-septenary" data-bs-dismiss="modal"
+            (click)="removerRecursoActa()">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal confirmar tipo de reunión -->
+  <div class="modal fade" id="meet-type-confirm-modal" tabindex="-1" aria-labelledby="meet-type-confirm-modal-label"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="meet-type-confirm-modal-label">Cargar información</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding: 1rem;">
+          <p class="text-align-center margin-0">
+            Puede pre-cargar toda la información asociada a la última reunión registrada con este tipo
+            <b>(reemplazará la información que hayas diligenciado)</b>
+          </p>
+          <p class="text-align-center mt-2 margin-bottom-0">¿Desea continuar?</p>
+        </div>
+        <div class="modal-footer border-top-none">
+          <button class="btn outline-btn small-btn pt-tertiary" data-bs-dismiss="modal">Cancelar</button>
+          <button class="btn filled-btn small-btn pt-septenary" data-bs-dismiss="modal"
+            (click)="cargarTodo()">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /Modal confirmar tipo de reunión -->
+
+  <!-- Modal guardar reunión -->
+  <div class="modal fade" id="guardar-confirm-modal" tabindex="-1" aria-labelledby="guardar-confirm-modal-label"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="guardar-confirm-modal-label">Guardar reunión</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding: 1rem;">
+          <p class="text-align-center margin-0">
+            ¿Desea guardar toda la información de la reunión?
+          </p>
+        </div>
+        <div class="modal-footer border-top-none">
+          <button class="btn outline-btn small-btn pt-tertiary" data-bs-dismiss="modal">Cancelar</button>
+          <button class="btn filled-btn small-btn pt-septenary" data-bs-dismiss="modal"
+            (click)="saveMeeting()">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal guardar reunión -->
+
+  <!-- Modal enviar invitación -->
+  <div class="modal fade" id="invitation-confirm-modal" tabindex="-1" aria-labelledby="invitation-confirm-modal-label"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="invitation-confirm-modal-label">Enviar invitación</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding: 1rem;">
+          <p class="text-align-center margin-0">
+            ¿Desea enviar correo de invitación a todos los convocados?
+          </p>
+        </div>
+        <div class="modal-footer border-top-none">
+          <button class="btn outline-btn small-btn pt-tertiary" data-bs-dismiss="modal"
+            (click)="notSendEmails()">Cancelar</button>
+          <button class="btn filled-btn small-btn pt-septenary" data-bs-dismiss="modal"
+            (click)="sendEmails()">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /Modal enviar invitación -->
+
+  <!-- Modal eliminar convocado -->
+  <div class="modal fade" id="summon-remove-modal" tabindex="-1" aria-labelledby="summon-remove-modal-label"
+    aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="summon-remove-modal-label">Eliminar convocado</h5>
+        </div>
+        <div class="modal-body" style="padding: 1rem;">
+          <p class="text-align-center margin-0">
+            ¿Seguro que desea eliminar este convocado?.
+            <b>Esta acción no se puede deshacer</b>
+          </p>
+        </div>
+        <div class="modal-footer border-top-none">
+          <button class="btn outline-btn small-btn pt-tertiary" data-bs-dismiss="modal"
+            (click)="recuperarConvocado()">Cancelar</button>
+          <button class="btn filled-btn small-btn pt-septenary" data-bs-dismiss="modal"
+            (click)="convocadoEliminado()">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /Modal eliminar convocado -->
+
+  <!-- Modal eliminar programa -->
+  <div class="modal fade" id="programming-remove-modal" tabindex="-1" aria-labelledby="programming-remove-modal-label"
+    aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="programming-remove-modal-label">Eliminar pregunta</h5>
+        </div>
+        <div class="modal-body" style="padding: 1rem;">
+          <p class="text-align-center margin-0">
+            ¿Seguro que desea eliminar esta pregunta?.
+            <b>Esta acción no se puede deshacer</b>
+          </p>
+        </div>
+        <div class="modal-footer border-top-none">
+          <button class="btn outline-btn small-btn pt-tertiary" data-bs-dismiss="modal"
+            (click)="recuperarPrograma()">Cancelar</button>
+          <button class="btn filled-btn small-btn pt-septenary" data-bs-dismiss="modal"
+            (click)="programaEliminadoCorrectamente()">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal eliminar programa -->
+
+  <!-- Modal eliminar opcion -->
+  <div class="modal fade" id="programming-option-remove-modal" tabindex="-1"
+    aria-labelledby="programming-option-remove-modal-label" aria-hidden="true" data-bs-backdrop="static"
+    data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="programming-option-remove-modal-label">Eliminar opción</h5>
+        </div>
+        <div class="modal-body" style="padding: 1rem;">
+          <p class="text-align-center margin-0">
+            ¿Seguro que desea eliminar esta opción?.
+            <b>Esta acción no se puede deshacer</b>
+          </p>
+        </div>
+        <div class="modal-footer border-top-none">
+          <button class="btn outline-btn small-btn pt-tertiary" data-bs-dismiss="modal"
+            (click)="recuperarPrograma()">Cancelar</button>
+          <button class="btn filled-btn small-btn pt-septenary" data-bs-dismiss="modal"
+            (click)="opcionEliminada()">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal eliminar opcion -->
+</div>
+
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="square-jelly-box" [fullScreen]="true">
+  <p style="color: white"> Cargando... </p>
+</ngx-spinner>

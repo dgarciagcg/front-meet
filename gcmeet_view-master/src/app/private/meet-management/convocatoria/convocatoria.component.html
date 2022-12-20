@@ -1,0 +1,146 @@
+<div class="row no-row-margin">
+    <button class="btn round-btn pt-danger drop-btn summon-drop-btn fade" droppable="delete"
+        (dragover)="allowDropItem($event)" (dragenter)="setContainerDropArea($event, true)"
+        (drop)="dropDragItem($event)" (dragleave)="setContainerDropArea($event, false)">
+        <i class="fas fa-trash block"></i>
+    </button>
+    <div class="col-6 position-relative">
+        <div class="width-100 position-absolute pretty-scrollbar overflow-auto grab-section col-padding"
+            style="top: 0; left: 0; height: calc(100% - 3rem);">
+            <h6 class="margin-0 bg-octonary pt-2 pb-2 ps-2">Participantes</h6>
+            <ul class="width-100 primary-list summon-list" id="summon-participants" droppable="arrayConvocadosA"
+                (dragover)="allowDropItem($event)" (dragenter)="setContainerDropArea($event, true)"
+                (dragleave)="setContainerDropArea($event, false)" (drop)="dropDragItem($event)">
+                <!-- ngFor -->
+                <ng-container *ngIf="arrayConvocadosA.length === 0">
+                    <li>
+                        <div>
+                            <div class="width-100">No hay convocados</div>
+                        </div>
+                    </li>
+                </ng-container>
+                <ng-container *ngFor="let convocado of arrayConvocadosA; let i = index">
+                    <li draggable="true" [attr.data-id]="convocado.identificacion"
+                        (dragenter)="seItemDropArea($event, true)" (dragleave)="seItemDropArea($event, false)"
+                        (dragend)="breakDragItem($event)" (dragstart)="setDragItem($event)">
+                        <div>
+                            <i class="fas fa-bars cl-primary me-3"></i>
+                            <div class="width-100">{{convocado.nombre}}</div>
+                            <div style="font-size: 10px;">{{convocado.rol}}</div>
+                            <div style="text-align: right;" *ngIf="false">
+                                <i *ngIf="convocado.acta === '0'" class="fas fa-paper-plane cl-primary me-3" style="font-size: 0.9rem; cursor: pointer; color: #CFCFCF;" (click)="actorizacionActa(i)" title="Recibe acta"></i>
+                                <i *ngIf="convocado.acta === '1'" class="fas fa-paper-plane cl-primary me-3" style="font-size: 0.9rem; cursor: pointer; color: #9F8C5B;" (click)="actorizacionActa(i)" title="Recibe acta"></i>
+                                <i *ngIf="convocado.firma === '0'" class="fas fa-signature cl-primary me-3" style="font-size: 0.9rem; cursor: pointer; color: #CFCFCF;" (click)="actorizacionFirma(i)" title="Debe firmar"></i>
+                                <i *ngIf="convocado.firma === '1'" class="fas fa-signature cl-primary me-3" style="font-size: 0.9rem; cursor: pointer; color: #9F8C5B;" (click)="actorizacionFirma(i)" title="Debe firmar"></i>
+                            </div>
+                        </div>
+                    </li>
+                </ng-container>
+                <!-- /ngFor -->
+            </ul>
+            <h6 class="margin-0 bg-octonary pt-2 pb-2 ps-2 mt-3">Invitados</h6>
+            <ul class="width-100 primary-list summon-list" id="summon-invited" droppable="arrayConvocadosI"
+                (dragover)="allowDropItem($event)" (dragenter)="setContainerDropArea($event, true)"
+                (dragleave)="setContainerDropArea($event, false)" (drop)="dropDragItem($event)">
+                <!-- ngFor -->
+                <ng-container *ngIf="arrayConvocadosI.length === 0">
+                    <li>
+                        <div>
+                            <div class="width-100">No hay invitados</div>
+                        </div>
+                    </li>
+                </ng-container>
+                <ng-container *ngFor="let convocado of arrayConvocadosI; let i = index">
+
+                    <li draggable="true" [attr.data-id]="convocado.identificacion"
+                        (dragenter)="seItemDropArea($event, true)" (dragleave)="seItemDropArea($event, false)"
+                        (dragend)="breakDragItem($event)" (dragstart)="setDragItem($event)">
+                        <div>
+                            <i class="fas fa-bars cl-primary me-3"></i>
+                            <div class="width-100">{{convocado.nombre}}</div>
+                            <div>{{convocado.rol}}</div>
+                        </div>
+                    </li>
+
+                </ng-container>
+                <!-- /ngFor -->
+            </ul>
+        </div>
+    </div>
+    <div class="col-6 position-relative">
+        <div id="summon-form-update" class="fade" droppable="update" (dragover)="allowDropItem($event)"
+            (dragenter)="setContainerDropArea($event, true)" (drop)="dropDragItem($event)"
+            (dragleave)="setContainerDropArea($event, false)">
+            <p class="font-weight-700 mt-3">Suelte aquí para modificar el convocado</p>
+        </div>
+        <h6 class="margin-0">Buscar</h6>
+
+        <div class="row">
+            <div class="col-sm-12 col-lg-4">
+                <label class="mt-2 position-relative width-100">
+                    <div class="position-absolute">Persona</div>
+                    <select class="form-select" (change)="tipoPersona = $any($event.target).value">
+                        <option value="0" selected>Natural</option>
+                        <option value="1">Jurídica</option>
+                    </select>
+                </label>
+            </div>
+            <div class="col-sm-12 col-lg-8">
+                <input autocomplete="off" required class="form-control mt-2" type="search" #buscador
+                    [attr.list]="tipoPersona === '0' ? 'user-list-by-id' : 'nit-list'" placeholder="Buscar"
+                    (change)="(tipoPersona === '0' ? autocompletar($any($event.target).value) : autocompletarPorNit($any($event.target).value)); buscador.value = '';">
+                <datalist id="user-list-by-id">
+                    <ng-container *ngFor="let recurso of recursosGc_MeetYGcm; let i = index">
+                        <option value="{{ recurso.identificacion }}">{{ recurso.nombre }}</option>
+                    </ng-container>
+                </datalist>
+                <datalist id="nit-list">
+                    <ng-container *ngFor="let entidad of entidades; let i = index">
+                        <option value="{{ entidad.nit }}"> {{ entidad.razon_social }} </option>
+                    </ng-container>
+                </datalist>
+            </div>
+        </div>
+
+        <h6 class="margin-0 mt-2">Convocar</h6>
+        <form id="summon-form" [formGroup]="formularioAgregarAsistente" (ngSubmit)="agregarAsistente()">
+            <!-- identificacion -->
+            <input autocomplete="off" required class="form-control mt-2" type="text" formControlName="identificacion"
+                placeholder="Identificación *">
+            <!-- nombre -->
+            <input autocomplete="off" required class="form-control mt-2" type="text" formControlName="nombre"
+                placeholder="Nombre *">
+            <!-- correo -->
+            <input required class="form-control mt-2" type="mail" formControlName="correo" placeholder="Correo *">
+            <!-- telefono -->
+            <input class="form-control mt-2" type="text" formControlName="telefono" placeholder="Teléfono">
+            <!-- tipo -->
+            <label class="mt-2 position-relative width-100">
+                <div class="position-absolute">Tipo</div>
+                <select class="form-select" formControlName="tipo">
+                    <option value="0">Participante</option>
+                    <option value="1">Invitado</option>
+                    <option value="2">Representante legal</option>
+                </select>
+            </label>
+            <!-- rol -->
+            <input autocomplete="off" required class="form-control mt-2" type="text" formControlName="rol"
+                placeholder="Rol *" list="rol-list">
+            <datalist id="rol-list">
+                <option *ngFor="let rol of arrayRoles; let i = index" value="{{ rol.descripcion }}"
+                    [attr.data-value]="rol.id_rol">
+            </datalist>
+            <!-- nit -->
+            <input autocomplete="off" required class="form-control mt-2 entity-input" type="hidden"
+                formControlName="nit" placeholder="Nit *">
+            <input required class="form-control mt-2 entity-input" type="hidden" formControlName="razon_social"
+                placeholder="Razon social *">
+            <input required class="form-control mt-2" type="hidden" formControlName="participacion"
+                placeholder="Participación *">
+            <button type="submit" class="btn width-100 mt-2 white-color">
+                <i class="fas fa-plus-square me-2"></i>
+                <span>Agregar</span>
+            </button>
+        </form>
+    </div>
+</div>

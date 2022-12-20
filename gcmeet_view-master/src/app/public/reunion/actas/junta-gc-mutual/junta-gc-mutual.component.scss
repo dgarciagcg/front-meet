@@ -1,0 +1,33 @@
+.page-content {
+    background: rgb(82, 86, 89);
+    padding: 0;
+}
+
+.page-break {
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 0;
+}
+
+.page-break:not(:last-child) {
+    margin-bottom: 1rem;
+}
+
+ul {
+    list-style-type: decimal !important;
+    padding-left: 2rem !important;
+}
+
+ul li {
+    list-style-type: decimal !important;
+    font-weight: bold !important;
+    font-size: 1rem !important;
+}
+
+#body-page > .page-break {
+    padding: 5rem;
+}
+
+#page-1 {
+    background-size: contain;
+}

@@ -1,0 +1,83 @@
+.card {
+  border-radius: 0.4rem;
+  margin: 0;
+}
+
+.card.primary-card {
+  border: 0.0625rem solid #e6e6e6;
+}
+
+.card.primary-card .card-header {
+  background: transparent;
+  padding: 1rem;
+}
+
+.card.secondary-card {
+  background: var(--hex-selected-palette, transparent);
+  align-items: flex-start;
+  flex-direction: row;
+  border-radius: 0;
+  display: flex;
+  border: none;
+}
+
+.card.secondary-card.reverse-card {
+  flex-direction: row-reverse;
+}
+
+.card.secondary-card .card-body {
+  width: 100%;
+  padding: 0;
+}
+
+.card.secondary-card .card-title {
+  margin: 0 1rem 0 0;
+  position: relative;
+  padding: 0.6rem;
+}
+
+.card.secondary-card .card-title::after {
+  border-radius: 0.24rem;
+}
+
+.card.secondary-card .card-title > .fas,
+.card.secondary-card .card-title > .far {
+  position: relative;
+  font-size: 1.1rem;
+  display: block;
+  z-index: 1;
+}
+
+.card.quaternary-card {
+  border-radius: 0.4rem;
+  position: relative;
+}
+
+.card.quaternary-card > .card-body {
+  text-align: center;
+  position: absolute;
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+.card.quinary-card {
+  background: var(--hex-selected-palette, #ffffff);
+  box-shadow: 0rem 0.1875rem 1.25rem #194b7014;
+  border-color: #e6e6e6;
+  border-width: 0.0625rem;
+  border-style: solid;
+}
+
+.card.quinary-card .card-title {
+  border-bottom: 0.0625rem solid #e6e6e6;
+  color: var(--hex-primary-palette);
+  padding: 1rem 1.33rem;
+  align-items: center;
+  font-weight: 700;
+  display: flex;
+}
+
+.card.quinary-card .card-body {
+  padding: 1rem;
+}

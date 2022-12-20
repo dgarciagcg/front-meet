@@ -1,0 +1,455 @@
+<aside class="left-aside">
+    <!-- Logo -->
+    <!-- <img src="assets/img/gcm-icon.png" style="width: 100%;"> -->
+    <a class="h5 mt-0 mb-0 ms-3 go-home-button" routerLink="/public/home">
+        <span class="font-weight-400">GC</span>meet
+    </a>
+    <div class="bg-denary rounded-border mt-3 position-relative overflow-hidden">
+        <div class="ps-3 pt-2 pb-2">
+            <p class="cl-quaternary mt-2 mb-2">Fecha</p>
+            <h4 class="cl-quaternary font-weight-100 mt-1 mb-1">{{ fechaReunion ? (fechaReunion | date:'yy/M/d') : '' }}
+            </h4>
+        </div>
+        <div class="position-absolute" style="top: 1rem; right: -0.4rem;">
+            <img src="assets/img/lobby/calendar-bk.png" class="image-filter" style="width: 4rem;">
+        </div>
+    </div>
+    <div class="bg-denary rounded-border mt-3 position-relative overflow-hidden">
+        <div class="ps-3 pt-2 pb-2">
+            <p class="cl-quaternary mt-2 mb-2">Hora</p>
+            <h4 class="cl-quaternary font-weight-100 mt-1 mb-1 text-transform-lowercase">
+                {{ fechaReunion ? (fechaReunion | date:'h:mm a') : '' }}
+            </h4>
+        </div>
+        <div class="position-absolute" style="top: 1rem; right: -0.8rem;">
+            <img src="assets/img/lobby/clock-bk.png" class="image-filter" style="width: 4.5rem;">
+        </div>
+    </div>
+    <div class="bg-denary rounded-border mt-3 position-relative overflow-hidden">
+        <div class="ps-3 pe-3 pt-2 pb-2">
+            <p class="cl-quaternary mt-2 mb-2">Enlace</p>
+            <a class="meet-link" target="_blank"
+                href="https://teams.microsoft.com/l/meetup-join/19:6da4d5df043346e9968e273580df2ba4@thread.skype/1648589553260?context=%7B%22Tid%22:%22c7b0a7da-c3f3-42e5-a440-e8ef09655f46%22,%22Oid%22:%2243a35597-f2b6-44c1-956e-1f7c602f8194%22%7D">
+                https://teams.microsoft.com/...
+            </a>
+            <i class="far fa-copy" style="position: absolute; top: 0.4rem; right: 0.4rem; color: #9d9d9d;"></i>
+        </div>
+    </div>
+    <div class="bg-denary rounded-border mt-3 mb-3 position-relative overflow-auto pretty-scrollbar">
+        <div class="ps-3 pe-3 pt-2 pb-2">
+            <p class="cl-quaternary mt-2 mb-2">Archivos adjuntos</p>
+            <ul class="secondary-list">
+                <li class="mt-1" *ngIf="!archivos.length">
+                    No hay archivos disponibles
+                </li>
+                <ng-container *ngFor="let item of archivos">
+                    <li class="mt-1">
+                        <a [href]="(storage + item.url) | safeUrl" target="_blank" [download]="item.descripcion">
+                            {{item.descripcion}}
+                            <i class="fas fa-file-pdf ps-1" style="color: #dc4437;"></i>
+                        </a>
+                    </li>
+                </ng-container>
+            </ul>
+        </div>
+    </div>
+    <!-- Cerrar sesión -->
+    <button class="btn logout-button mt-auto" (click)="logout()">
+        <i class="fas fa-sign-out-alt me-2 cl-primary"></i>
+        <span>Salir</span>
+    </button>
+</aside>
+<div class="page-content pretty-scrollbar">
+    <div class="display-flex flex-direction-column height-100">
+        <ng-container *ngIf="!dataReunion || !dataReunion.descripcion; else headerWithDescription">
+            <section class="card primary-card shadowed bordered-i sm-rounded-border-i hpt-quaternary p-3 mt-4"
+                style="flex-direction: column; align-items: center; justify-content: center;">
+                <div class="card-title" style="width: 12rem; height: 7rem;">
+                    <img [src]="dataReunion?.logo" class="width-100 margin-auto">
+                </div>
+                <div class="card-body pt-4 pb-0">
+                    <h4 class="font-weight-400" style="text-align: center;">{{ dataReunion?.titulo }}</h4>
+                </div>
+            </section>
+        </ng-container>
+        <ng-template #headerWithDescription>
+            <section class="card secondary-card shadowed bordered-i sm-rounded-border-i hpt-quaternary p-3 mt-4">
+                <div class="card-title display-flex bg-octonary ps-4 pe-4 pt-4 pb-4"
+                    style="width: 20rem; height: 12rem;">
+                    <img [src]="dataReunion?.logo" class="width-100 margin-auto">
+                </div>
+                <div class="card-body pt-4 pb-4">
+                    <h5 class="font-weight-400">{{ dataReunion?.titulo }}</h5>
+                    <p class="title-style mt-3 mb-2">Descripción</p>
+                    <p>{{ dataReunion?.descripcion }}</p>
+                </div>
+            </section>
+        </ng-template>
+
+        <section id="second-section">
+            <div class="position-absolute top-0 left-0 height-100 width-100">
+                <div class="row row-margin height-100">
+                    <div class="col-sm-12 col-lg-6 height-100 pt-3">
+                        <ng-container *ngIf="+dataReunion?.quorum === 1; else noQuorum">
+                            <ng-container *ngIf="dataStorage && dataStorage.tipo_usuario === 'Convocado'">
+                                <ng-container *ngIf="!showRepresentados && !showRepresentante">
+                                    <div class="card primary-card height-100 bg-quaternary">
+                                        <h6 class="card-header">Designar poder</h6>
+                                        <div class="card-body overflow-y-auto pretty-scrollbar">
+                                            <form class="height-100 display-flex flex-direction-column" method="post"
+                                                [formGroup]="formRepresentante" (submit)="abrirModal()">
+                                                <input required class="form-control" type="text"
+                                                    formControlName="identificacion" placeholder="Identificación *">
+                                                <input required class="form-control mt-2" type="text"
+                                                    formControlName="nombre" placeholder="Nombre completo*">
+                                                <input required class="form-control mt-2" type="mail"
+                                                    formControlName="correo" placeholder="Correo electrónico *">
+                                                <button class="btn width-100 mt-auto" type="submit"
+                                                    data-bs-toggle="modal" data-bs-target="#signature-modal"
+                                                    [disabled]="!formRepresentante.valid">
+                                                    <i class="far fa-send me-1"></i>
+                                                    <span>Firmar poder</span>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                                <ng-container *ngIf="showRepresentante && dataRepresentante">
+                                    <div class="card primary-card height-100 bg-quaternary">
+                                        <h6 class="card-header">Apoderado</h6>
+                                        <div class="card-body overflow-y-auto pretty-scrollbar">
+                                            <p class="mb-0 mt-2">Identificación</p>
+                                            <p class="mb-0 mt-2 title-style">{{ dataRepresentante.identificacion }}</p>
+                                            <p class="mb-0 mt-2">Nombre</p>
+                                            <p class="mb-0 mt-2 title-style">{{ dataRepresentante.nombre }}</p>
+                                            <p class="mb-0 mt-2">Correo</p>
+                                            <p class="mb-0 mt-2 title-style">{{ dataRepresentante.correo }}</p>
+                                            <p class="mb-0 mt-2">Firma</p>
+                                            <img src="{{(pathFirma + '/' + dataRepresentante.soporte)}}"
+                                                [alt]="dataRepresentante.nombre" style="height: 6rem;">
+                                            <button class="btn width-100 mt-auto" type="submit" data-bs-toggle="modal"
+                                                data-bs-target="#power-cancel-modal">
+                                                <span>Cancelar poder</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </ng-container>
+                            <ng-container *ngIf="showRepresentados">
+                                <div class="card primary-card height-100 bg-quaternary">
+                                    <h6 class="card-header">Actuando en poder de</h6>
+                                    <div class="card-body overflow-y-auto pretty-scrollbar">
+                                        <ul class="primary-list power-list">
+                                            <ng-container *ngFor="let item of dataRepresentados">
+                                                <li>
+                                                    <div class="width-100">{{item.nombre}}</div>
+                                                    <div>{{item.identificacion}}</div>
+                                                </li>
+                                            </ng-container>
+                                        </ul>
+                                        <button class="btn width-100 mt-3" type="submit" data-bs-toggle="modal"
+                                            data-bs-target="#representation-cancel-modal" *ngIf="showBtnCancelar">
+                                            <span>Cancelar poder</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </ng-container>
+                            <ng-container
+                                *ngIf="(!dataStorage || dataStorage.tipo_usuario === 'Invitado') && !showRepresentados">
+                                <ng-container *ngTemplateOutlet="noQuorum"></ng-container>
+                            </ng-container>
+                        </ng-container>
+                        <ng-template #noQuorum>
+                            <div
+                                class="height-100 p-3 overflow-auto bg-quaternary bordered rounded-border pretty-scrollbar">
+                                <!-- ngIf -->
+                                <div
+                                    class=" height-100 width-100 display-flex align-items-center justify-content-center flex-direction-column">
+                                    <img src="assets/img/lobby/handshake.png" class="width-25">
+                                    <p class="font-weight-700 mt-3">Esta opción no está disponible</p>
+                                </div>
+                                <!-- ngIf -->
+                            </div>
+                        </ng-template>
+                    </div>
+                    <div class="col-sm-12 col-lg-6 height-100 pt-3">
+                        <ng-container
+                            *ngIf="(showBtnReunion && !showRepresentante) || showDivReunion; else waitingMeet">
+                            <div
+                                class="height-100 p-3 overflow-auto bg-quaternary bordered rounded-border pretty-scrollbar display-flex flex-direction-column">
+                                <div class="height-100 display-flex p-2 align-items-center justify-content-center">
+                                    <div class="spinner-border me-2 cl-primary" role="status"></div>
+                                    <h5 class="font-weight-400 mb-0">En curso</h5>
+                                </div>
+                                <div class="sm-rounded-border bordered p-2 bg-octonary mt-2" *ngIf="showDivReunion">
+                                    <p class="m-0">Progreso de la reunión</p>
+                                    <h5 class="font-weight-400 mb-0 mt-2">{{porcentajeAvanceReunion + '%'}}</h5>
+                                    <div class="progress pt-septenary mt-1">
+                                        <div class="progress-bar" role="progressbar" aria-valuemin="0"
+                                            aria-valuemax="100" [ngStyle]="{ 'width': porcentajeAvanceReunion + '%' }"
+                                            [attr.aria-valuenow]="porcentajeAvanceReunion"></div>
+                                    </div>
+                                </div>
+                                <a [routerLink]="'/public/reunion/meeting-room/' + idConvocadoReunion"
+                                    class="btn filled-btn pt-primary width-100 mt-4"
+                                    *ngIf="showBtnReunion && !showRepresentante">
+                                    <b>Ingresar</b>
+                                    <i class="fas fa-long-arrow-alt-right ms-2"></i>
+                                </a>
+                            </div>
+                        </ng-container>
+                        <ng-template #waitingMeet>
+                            <div
+                                class="height-100 p-3 overflow-auto bg-quaternary bordered rounded-border pretty-scrollbar">
+                                <!-- ngIf -->
+                                <div
+                                    class="height-100 width-100 display-flex align-items-center flex-direction-column position-relative">
+                                    <div
+                                        class="height-100 display-flex align-items-center justify-content-center flex-direction-column">
+                                        <div class="loader-pointer-container">
+                                            <div class="loader-pointer"></div>
+                                            <div class="loader-pointer"></div>
+                                            <div class="loader-pointer"></div>
+                                        </div>
+                                        <h2 class="mt-3 font-weight-100 mb-0">En espera</h2>
+                                        <div class="ps-5 pe-5 text-align-center">
+                                            <p class="font-weight-700 mt-3 mb-0" *ngIf="timeDifference"
+                                                style="font-size: 1.25rem;">
+                                                Faltan {{timeDifference.days > 0 ? (timeDifference.days + ' días, ') :
+                                                ''}}
+                                                {{timeDifference.days > 0 ? (timeDifference.hours + ' horas y') :
+                                                (timeDifference.hours > 0 ? (timeDifference.hours + ' horas y ') : '')}}
+                                                {{timeDifference.minutes + ' minutos'}}
+                                            </p>
+                                            <p class="font-weight-700 mt-3 mb-0" style="font-size: 1rem;"
+                                                *ngIf="!timeDifference">
+                                                Prepárate, la reunión comenzará en cualquier momento
+                                            </p>
+                                            <a href="https://teams.microsoft.com/l/meetup-join/19:6da4d5df043346e9968e273580df2ba4@thread.skype/1648589553260?context=%7B%22Tid%22:%22c7b0a7da-c3f3-42e5-a440-e8ef09655f46%22,%22Oid%22:%2243a35597-f2b6-44c1-956e-1f7c602f8194%22%7D"
+                                                target="_blank" class="btn filled-btn pt-primary width-100 mt-4">
+                                                <b>Ingresar</b>
+                                                <i class="fas fa-long-arrow-alt-right ms-2"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- ngIf -->
+                            </div>
+                        </ng-template>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- Modal firma poder -->
+    <form method="post" (submit)="enviarSMS()">
+        <div class="modal fade" id="signature-modal" tabindex="-1" aria-labelledby="signature-modal-label"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="signature-waiting-modal-label">Firmar poder</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" style="padding: 1rem;">
+                        <ng-container *ngIf="!showRestricciones">
+                            <p class="m-0">
+                                Ingrese su número de celular, le enviaremos un SMS con un enlace para firmar el poder
+                                desde su dispositivo móvil
+                            </p>
+                            <input required class="form-control mt-3" type="text" name="tel" minlength="10"
+                                [(ngModel)]="numeroTelefono" placeholder="Número de teléfono" maxlength="10">
+                        </ng-container>
+                        <div *ngIf="showRestricciones">
+                            <ul class="mt-3 cl-danger" *ngFor="let item of restricciones">
+                                <li>{{ item.descripcion }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top-none" *ngIf="!showRestricciones">
+                        <button type="button" class="btn outline-btn small-btn pt-tertiary"
+                            data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn filled-btn small-btn pt-septenary">Confirmar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- Modal firma poder en curso -->
+    <div class="modal fade" id="signature-waiting-modal" tabindex="-1" aria-labelledby="signature-waiting-modal-label"
+        aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="signature-modal-label">Firmar poder</h5>
+                </div>
+                <div class="modal-body text-align-center" style="padding: 1rem;">
+                    <div class="spinner-border mt-3 cl-primary" role="status"></div>
+                    <h5 class="font-weight-400 mb-0 mt-3">Firma en proceso</h5>
+                    <div class="card secondary-card mt-3 ms-5 me-5 opaque-bg-inty af-bg-warning rounded-border p-2">
+                        <div class="card-title align-self-center me-1">
+                            <i class="fas fa-info-circle cl-warning" style="font-size: 1.5rem;"></i>
+                        </div>
+                        <div class="card-body text-align-left align-self-center" *ngIf="txtFirma">
+                            {{ txtFirma }}
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top-none">
+                    <button class="btn filled-btn small-btn pt-septenary" [disabled]="disabledBtnSMS"
+                        (click)="openModal('#signature-modal', '#signature-waiting-modal');">Reenviar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal cancelar poder -->
+    <div class="modal fade" id="power-cancel-modal" tabindex="-1" aria-labelledby="power-cancel-modal-label"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="power-cancel-modal-label">Cancelar poder</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="padding: 1rem;">
+                    <p class="text-align-center margin-0">
+                        ¿Seguro que desea cancelar el poder designado?.
+                    </p>
+                </div>
+                <div class="modal-footer border-top-none">
+                    <button class="btn outline-btn small-btn pt-tertiary" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn filled-btn small-btn pt-septenary" data-bs-dismiss="modal"
+                        (click)="cancelarInvitacion()">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal cancelar poder -->
+    <div class="modal fade" id="join-the-meet-modal" tabindex="-1" aria-labelledby="join-the-meet-modal-label"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="join-the-meet-modal-label">Reunión en curso</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="padding: 1rem;">
+                    <p class="text-align-center margin-0">
+                        El acceso a la reunión ha sido habilitado.
+                    </p>
+                    <p class="text-align-center margin-0">
+                        ¿Desea acceder ahora mismo?.
+                    </p>
+                </div>
+                <div class="modal-footer border-top-none">
+                    <button class="btn outline-btn small-btn pt-tertiary" data-bs-dismiss="modal">Cancelar</button>
+                    <a class="btn filled-btn small-btn pt-septenary" data-bs-dismiss="modal"
+                        [routerLink]="'/public/reunion/meeting-room/' + idConvocadoReunion">Confirmar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal cancelar representaciones -->
+    <div class="modal fade" id="representation-cancel-modal" tabindex="-1"
+        aria-labelledby="representation-cancel-modal-label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="representation-cancel-modal-label">Cancelar representaciones</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="padding: 1rem;">
+                    <p class="text-align-center margin-0">
+                        ¿Seguro que desea cancelar las representaciones?.
+                    </p>
+                </div>
+                <div class="modal-footer border-top-none">
+                    <button class="btn outline-btn small-btn pt-tertiary" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn filled-btn small-btn pt-septenary" data-bs-dismiss="modal"
+                        (click)="cancelarRepresentacion()">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<aside class="right-aside pretty-scrollbar">
+
+    <div class="admin-options" style="position: relative;" [ngClass]="{ 'h-100': !listadoReuniones.length }">
+        <img src="assets/img/lobby/back.jpg"
+            style="width: 100%; height: 100%; border-radius: 0.4rem; object-fit: cover; object-position: center;">
+        <div style="position: absolute; bottom: 0; padding: 1rem 1.25rem;">
+            <p class="title-style separated" style="margin: 0; color: #ffffff;">Bienvenido(a)</p>
+            <h5 class="separated" style="margin: 0; color: #ffffff; font-weight: 100;" *ngIf="dataConvocado?.length">
+                {{ dataConvocado[0].nombre }}
+            </h5>
+        </div>
+    </div>
+
+    <ng-container *ngIf="listadoReuniones.length">
+        <div class="mt-3 mb-3 height-100 display-flex flex-direction-column">
+            <label class="position-relative width-100">
+                <div>Grupo</div>
+                <select class="form-select border-none-i" name="group" style="font-size: 0.7rem;"
+                    (change)="changeListaReuniones($event)">
+                    <!-- ngfor -->
+                    <ng-container *ngFor="let item of listaGruposReuniones">
+                        <option [value]="item.id">{{item.descripcion}}</option>
+                    </ng-container>
+                    <!-- /ngfor -->
+                </select>
+            </label>
+            <div class="mt-2 bordered sm-rounded-border position-relative height-100 pretty-scrollbar overflow-auto"
+                *ngIf="filterSelected?.length">
+                <div class="position-absolute width-100 height-100 top-0 left-0 ps-2 pe-2">
+                    <!-- ngfor -->
+                    <ng-container *ngFor="let item of filterSelected; let i = index">
+                        <div class="card secondary-card meet-card align-items-center">
+                            <div class="card-title ps-0 m-0">
+                                <img [src]="item.imagen" class="rounded-border" style="height: 2.5rem;">
+                            </div>
+                            <div class="card-body">
+                                <div class="card secondary-card reverse-card align-items-center">
+                                    <div class="card-title pe-0" style="margin: 0;">
+                                        <a class="btn smr-round-btn card-btn" target="_blank"
+                                            [href]="'public/reunion/acceso/' + item.token + '/' + dataStorage?.identificacion">
+                                            <i class="fas fa-long-arrow-alt-right block"
+                                                style="width: 1rem; height: 1rem;"></i>
+                                        </a>
+                                    </div>
+                                    <div class="card-body pt-1 pb-1">
+                                        <p class="title-style margin-0" style="font-size: 0.55rem;">
+                                            {{item.titulo}}
+                                        </p>
+                                        <p class="margin-0" style="font-size: 0.5rem;">
+                                            {{item.descripcion_grupo}}
+                                        </p>
+                                        <i class="far fa-calendar mt-1" style="font-size: 0.75rem; color: #9d9d9d;"></i>
+                                        <span class="me-1 mt-1" style="font-size: 0.5rem; color: #9d9d9d;">
+                                            {{item.date | date:'yy/M/d'}}
+                                        </span>
+                                        <i class="far fa-clock mt-1" style="font-size: 0.75rem; color: #9d9d9d;"></i>
+                                        <span class="mt-1" style="font-size: 0.5rem; color: #9d9d9d;">
+                                            {{item.date | date:'h:mm a'}}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <!-- /ngfor -->
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+
+</aside>
+
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="square-jelly-box" [fullScreen]="true">
+    <p style="color: white"> Cargando... </p>
+</ngx-spinner>

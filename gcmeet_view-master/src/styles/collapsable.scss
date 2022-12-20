@@ -1,0 +1,55 @@
+/* Directiva */
+
+.primary-collapsable {
+  cursor: pointer;
+}
+
+.primary-collapsable.activated-collapsable.collapsable-icon[collapsable-activated-content]::before,
+.primary-collapsable.activated-collapsable .collapsable-icon[collapsable-activated-content]::before {
+  content: attr(collapsable-activated-content);
+}
+
+.primary-collapsable:not(.activated-collapsable).collapsable-icon[collapsable-content]::before,
+.primary-collapsable:not(.activated-collapsable) .collapsable-icon[collapsable-content]::before {
+  content: attr(collapsable-content);
+}
+
+.primary-collapsable-content {
+  overflow: hidden;
+}
+.primary-collapsable-content:not([collapsable-direction="horizontal"]) {
+  transition: max-height 0.2s ease-out;
+  max-height: 0;
+}
+.primary-collapsable-content[collapsable-direction="horizontal"] {
+  transition: max-width 0.2s ease-out, min-width 0.2s ease-out;
+  max-width: 0;
+  min-width: 0;
+}
+
+/* Apariencia */
+
+.primary-collapsable-card {
+  border: 0.0625rem solid #e6e6e6;
+  border-radius: 0.4rem;
+  background: #ffffff;
+}
+
+.primary-collapsable-header {
+  border-bottom: 0.0625rem solid #e6e6e6;
+  border-bottom-right-radius: 0.4rem;
+  border-bottom-left-radius: 0.4rem;
+  align-items: center;
+  font-weight: 700;
+  padding: 0.66rem;
+  color: #000000;
+  display: flex;
+}
+
+.primary-collapsable-header > :first-child {
+  width: 100%;
+}
+
+.primary-collapsable-body {
+  padding: 0.33rem 0.66rem;
+}

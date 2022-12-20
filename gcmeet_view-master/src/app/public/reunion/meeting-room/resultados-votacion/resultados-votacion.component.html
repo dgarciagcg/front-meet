@@ -1,0 +1,19 @@
+<div style="width: 250px; height: 120px;" [appCircularChart]="approvedPercentage"
+    [circularChartOptions]="{ chart: { startAngle: -180, endAngle: 0 }, label: { verticalCenter: 'bottom' }, valueSerie: { fill: '#171717' } }">
+</div>
+<div>
+    <div class="display-flex align-items-center mb-1">
+        <i class="fas fa-check block cl-septenary me-2"></i>
+        <div>
+            <h6 class="page-title mb-1">Aprobado</h6>
+            <p class="m-0">{{approved}} votos</p>
+        </div>
+    </div>
+    <div class="display-flex align-items-center mt-1">
+        <i class="fas fa-ban block cl-danger me-2"></i>
+        <div>
+            <h6 class="page-title mb-1">Rechazado</h6>
+            <p class="m-0">{{rejected}} votos</p>
+        </div>
+    </div>
+</div>

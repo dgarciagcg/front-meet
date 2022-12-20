@@ -1,0 +1,22 @@
+/* .ml-3 {
+    margin-left: 1rem;
+} */
+
+.return-button {
+    margin-top: 1rem;
+    color: #e6e6e6;
+}
+
+.return-button:hover {
+    color: #ffffff;
+}
+
+.access-container {
+    width: 27.5rem;
+}
+
+@media only screen and (max-width: 666px) {
+    .access-container {
+        width: 90%;
+    }
+}

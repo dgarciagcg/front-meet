@@ -1,0 +1,229 @@
+/* You can add global styles to this file, and also import other style files */
+body {
+    background: transparent;
+}
+
+.page-container {
+    // max-width: 1366px;
+    margin: 0 auto;
+    display: flex;
+    height: 100%;
+    width: 100%;
+    @media only screen and (max-width: 992px) {
+        flex-direction: column;
+    }
+}
+
+.page-container > :not(aside) {
+    display: contents;
+}
+
+aside,
+.page-content {
+    overflow: auto;
+    height: 100vh;
+}
+
+.page-content {
+    background-color: var(--hex-secondary-palette);
+    padding: 4rem 1.25rem 1.25rem;
+    flex: 1 1 auto;
+}
+
+.page-content > .row {
+    margin: 0;
+}
+
+:root {
+    --bs-body-color: var(--hex-tertiary-palette);
+    --bs-secondary-rgb: var(--secondary-palette);
+    --bs-primary-rgb: var(--primary-palette);
+    --bs-success-rgb: var(--success-palette);
+    --bs-warning-rgb: var(--warning-palette);
+    --bs-danger-rgb: var(--danger-palette);
+    --bs-font-sans-serif: "Montserrat";
+    --bs-body-line-height: initial;
+    --bs-body-font-size: 0.7rem;
+    --bs-body-font-weight: 500;
+}
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: var(--hex-primary-palette);
+    font-weight: 700;
+}
+
+.h1 {
+    font-size: 2.5rem;
+}
+
+.h2 {
+    font-size: 2rem;
+}
+
+.h3 {
+    font-size: 1.75rem;
+}
+
+.h4 {
+    font-size: 1.5rem;
+}
+
+.h5 {
+    font-size: 1.25rem;
+}
+
+.h6,
+h6 {
+    font-size: 0.9rem;
+}
+
+p {
+    font-size: 0.7rem;
+}
+
+p.title-style {
+    color: var(--hex-primary-palette);
+    font-weight: 700;
+}
+
+.pretty-scrollbar::-webkit-scrollbar {
+    background-color: #f2f2f2;
+    height: 1vmax;
+    cursor: grab;
+    width: 1vmin;
+}
+
+.pretty-scrollbar::-webkit-scrollbar-thumb {
+    border: 0.4rem solid #e6e6e6;
+    background-clip: content-box;
+    background-color: #e6e6e6;
+    border-radius: 1.33rem;
+}
+
+.pretty-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #f2f2f2;
+}
+
+.pretty-scrollbar::-webkit-scrollbar-track {
+    --webkit-box-shadow: inset 0 0 1vmin #f2f2f2;
+}
+
+.dark-pretty-scrollbar::-webkit-scrollbar {
+    background-color: #545454;
+    height: 1vmax;
+    cursor: grab;
+    width: 1vmin;
+}
+
+.dark-pretty-scrollbar::-webkit-scrollbar-thumb {
+    border: 0.4rem solid #1f1e27;
+    background-clip: content-box;
+    background-color: #1f1e27;
+    border-radius: 1.33rem;
+}
+
+.dark-pretty-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #545454;
+}
+
+.dark-pretty-scrollbar::-webkit-scrollbar-track {
+    --webkit-box-shadow: inset 0 0 1vmin #545454;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+a:active,
+a:focus,
+a:hover {
+    color: inherit;
+}
+
+.page-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #171717;
+}
+
+.sm-rounded-border {
+    border-radius: 0.2rem;
+}
+
+.sm-rounded-border-i {
+    border-radius: 0.2rem !important;
+}
+
+.rounded-border {
+    border-radius: 0.4rem;
+}
+
+.rounded-border-on-right {
+    border-bottom-right-radius: 0.4rem;
+    border-top-right-radius: 0.4rem;
+}
+
+.sm-rounded-border-on-bottom {
+    border-bottom-right-radius: 0.2rem;
+    border-bottom-left-radius: 0.2rem;
+}
+
+.rounded-border-on-bottom {
+    border-bottom-right-radius: 0.4rem;
+    border-bottom-left-radius: 0.4rem;
+}
+
+.bordered {
+    border: 0.0625rem solid #e6e6e6;
+}
+
+.bordered-i {
+    border: 0.0625rem solid #e6e6e6 !important;
+}
+
+.bordered-on-bottom {
+    border-bottom: 0.0625rem solid #e6e6e6;
+}
+
+.shadowed {
+    box-shadow: 0rem 0.1875rem 1.25rem #194b7014;
+}
+
+i.fas,
+i.far {
+    font-size: 1rem;
+}
+
+.fas.block,
+.far.block {
+    display: block;
+}
+
+hr {
+    color: #cbcbcb;
+    opacity: 1;
+}
+
+.col-padding {
+    padding-right: calc(var(--bs-gutter-x) * 0.5);
+    padding-left: calc(var(--bs-gutter-x) * 0.5);
+}
+
+.col-padding-right {
+    padding-right: calc(var(--bs-gutter-x) * 0.5);
+}
+
+.col-padding-left {
+    padding-left: calc(var(--bs-gutter-x) * 0.5);
+}

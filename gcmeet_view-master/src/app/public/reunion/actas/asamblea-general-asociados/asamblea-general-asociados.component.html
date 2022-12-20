@@ -1,0 +1,332 @@
+<div class="page-content" id="page-content-asamblea-general-ordinaria-accionistas">
+    <div class="page-break row-pdf" id="page-1" style="height: 100%; position: relative;"
+        [style]="{ 'background-image': 'url(' + env.root + '/assets/img/meets/acta2.JPG)' }">
+        <div style="text-align: center; height: 20%; width: 100%;">
+            <img [src]="env.root + meet.logo" style="height: 7.8125rem; margin-top: 5%;">
+        </div>
+        <h4
+            style="text-transform: uppercase; text-align: center; font-weight: bold; margin: 0; height: 65%; width: 100%; padding: 0 5rem;">
+            Asamblea Ordinaria de Asociados de LA ASOCIACIÓN MUTUAL {{meet.grupo}}
+        </h4>
+        <h2
+            style="font-weight: bold; color: #ffffff; text-transform: uppercase; text-align: center; width: 100%; margin: 0; height: 5%; width: 100%;">
+            Celebrado el día {{meetDate | date:'d/M/yy'}}
+        </h2>
+        <div style="background: #16151e; height: 10%; width: 100%; border-top: 0.35rem solid #6a5e41;">
+            <h4
+                style="font-weight: normal; color: #ffffff; text-transform: uppercase; text-align: center; margin-bottom: 0; margin-top: 4.5%;">
+                Acta No. {{consecutivoActa}}
+            </h4>
+        </div>
+    </div>
+    <div id="body-page">
+        <div class="page-break row-pdf">
+            <div class="col-pdf-12">
+                <h5 style="text-transform: uppercase; margin: 0 3rem 2rem 3rem; text-align: center; font-weight: bold;">
+                    Asamblea Ordinaria de Asociados de LA ASOCIACIÓN MUTUAL {{meet.grupo}}
+                </h5>
+                <p style="text-align: justify;">
+                    En la ciudad de Medellín, siendo las {{meetDate | date:'h:mm a'}} del día {{meetDate | date:"d"}} de
+                    {{meetDate | date:"MMMM"}} de {{meetDate | date:"yyyy"}} se reunieron de forma virtual los asociados
+                    de la sociedad ASOCIACIÓN MUTUAL GC MUTUAL para adelantar reunión Ordinaria atendiendo la
+                    convocatoria efectuada por el gerente, Dr. CARLOS FELIPE ROJAS TORO, el día 16 de marzo de 2022
+                    <!-- {{announcementDate | date:"d"}} de {{announcementDate | date:"MMMM"}} de {{announcementDate | date:"yyyy"}} -->
+                    mediante correo electrónico, a la dirección registrada por los asociados; para desarrollar el
+                    siguiente orden del día:
+                </p>
+            </div>
+            <div class="col-pdf-12">
+                <h5 style="text-transform: uppercase; margin: 1rem 0; font-weight: bold;">
+                    Orden del día
+                </h5>
+                <ng-container *ngFor="let dayOrder of programmingList;">
+                    <div
+                        style="border-bottom: 0.125rem solid #cccccc; font-size: 1rem; margin: 1rem 0; font-weight: bold; color: #545454;">
+                        {{dayOrder.orden}}. {{dayOrder.titulo}}
+                        <ng-container *ngFor="let option of dayOrder.opciones">
+                            <div
+                                style="font-size: 1rem; padding-left: 2rem; margin: 0.5rem 0; color: #545454; font-weight: normal;">
+                                {{option.orden | letrasOrdenadas:1}}.
+                                {{+dayOrder.tipo === 5 ? option.descripcion : option.titulo}}
+                            </div>
+                        </ng-container>
+                    </div>
+                </ng-container>
+            </div>
+            <div class="col-pdf-12">
+                <h5 style="text-transform: uppercase; margin: 1rem 0 2rem 0; font-weight: bold;">
+                    DESARROLLO DE LA REUNIÓN.
+                </h5>
+            </div>
+            <div class="col-pdf-12">
+                <ng-container *ngFor="let program of programmingList; index as i; last as l;">
+                    <ng-container *ngIf="i === 0;">
+                        <h6 style="text-transform: uppercase; margin: 0 0 2rem 0; font-weight: bold;">
+                            {{program.orden}}. {{program.titulo}}
+                        </h6>
+                        <p style="text-align: justify;">
+                            Una vez llamado a lista, se constata que se cuenta con la asistencia de {{asistencia}}
+                            de {{(summonedList | arrayFilter:{ tipo: [0, 2, '0', '2'] }).length}} asociados hábiles para
+                            el ejercicio, por lo tanto, de acuerdo a lo estipulado en el artículo 34 de los estatutos
+                            sociales existe quórum reglamentario para deliberar y decidir. Los {{asistencia}} asociados
+                            presentes en la reunión confirman {{participation}}% de las cuotas que tiene la Mutual
+                            repartidos así:
+                        </p>
+                        <table style="margin: 3rem 0 2rem 0;">
+                            <thead>
+                                <tr>
+                                    <th>N°</th>
+                                    <th>Nombre Asociado</th>
+                                    <th>Documento</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <ng-container *ngFor="let summoned of summonedLoggedinList; index as i;">
+                                    <tr>
+                                        <td>{{i + 1}}</td>
+                                        <td>{{summoned.nombre}}</td>
+                                        <td>{{summoned.identificacion}}</td>
+                                    </tr>
+                                </ng-container>
+                            </tbody>
+                        </table>
+                    </ng-container>
+                    <ng-container *ngIf="i > 0 && !l;">
+                        <!-- Sin respuesta -->
+                        <ng-container *ngIf="+program.tipo === 0">
+                            <ng-container *ngTemplateOutlet="title; context: { program: program, option: false }">
+                            </ng-container>
+                            <ng-container *ngTemplateOutlet="options; context: { program: program }"></ng-container>
+                        </ng-container>
+                        <!-- Votación -->
+                        <ng-container *ngIf="+program.tipo === 1">
+                            <ng-container *ngTemplateOutlet="vote; context: { program: program, option: false }">
+                            </ng-container>
+                            <ng-container *ngTemplateOutlet="options; context: { program: program }"></ng-container>
+                        </ng-container>
+                        <!-- Elección -->
+                        <ng-container *ngIf="+program.tipo === 5">
+                            <ng-container *ngTemplateOutlet="vote; context: { program: program, option: false }">
+                            </ng-container>
+                            <ng-container *ngTemplateOutlet="options; context: { program: program }"></ng-container>
+                        </ng-container>
+                        <!-- Entrada de texto -->
+                    </ng-container>
+                    <ng-container *ngIf="l">
+                        <h6 style="text-transform: uppercase; margin: 0 0 2rem 0; font-weight: bold;">
+                            {{program.orden}}. {{program.titulo}}
+                        </h6>
+                        <p style="text-align: justify;">
+                            El presidente de la reunión da paso al Dr Felipe Rojas Toro, Gerente, Para dar clausura a la
+                            asamblea ordinaria de asociados, siendo las {{endDate | date:'h:mm a'}} del día {{endDate |
+                            date:"d"}} de {{endDate | date:"MMMM"}}
+                            del año {{endDate | date:"yyyy"}}.
+                        </p>
+                        <p style="margin-top: 3rem; margin-bottom: 2rem; text-align: justify;">
+                            Sometida a consideración de los asociados, la presente acta fue leída y aprobada por
+                            unanimidad y en constancia de todo lo anterior se firma por el presidente y secretario de la
+                            Reunión
+                        </p>
+                    </ng-container>
+                </ng-container>
+            </div>
+            <div class="col-pdf-6">
+                <h6>Presidente:</h6>
+                <ng-container *ngIf="Presidente.is && !Presidente.sign">
+                    <div class="signature-pad-container">
+                        <signature-pad style="border-bottom: 1px dotted rgb(0, 0, 0)" [options]="signaturePadOptions">
+                        </signature-pad>
+                        <div class="mt-3 mb-2" [ngStyle]="{ width: signaturePadOptions.canvasWidth + 'px' }">
+                            <button class="btn" type="submit" data-bs-toggle="modal"
+                                data-bs-target="#sign-presidente-modal">Confirmar</button>
+                            <button class="btn ms-3" (click)="limpiarPresidente()" type="submit">Limpiar</button>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="Presidente.sign">
+                    <img [src]="Presidente.sign"
+                        [ngStyle]="{ 'height': signaturePadOptions.canvasHeight + 'px', 'width': signaturePadOptions.canvasWidth + 'px' }"
+                        style="border-bottom: 0.0625rem solid #000000;">
+                </ng-container>
+                <p style="font-weight: bold; color: #171717; margin: 0;">
+                    {{Presidente.summoned?.nombre?.toUpperCase()}}
+                </p>
+                <p style="margin: 0;">{{Presidente.summoned?.identificacion}}</p>
+            </div>
+            <div class="col-pdf-6">
+                <h6>Secretario:</h6>
+                <ng-container *ngIf="Secretario.is && !Secretario.sign">
+                    <div class="signature-pad-container">
+                        <signature-pad style="border-bottom: 1px dotted rgb(0, 0, 0)" [options]="signaturePadOptions">
+                        </signature-pad>
+                        <div class="mt-3 mb-2" [ngStyle]="{ width: signaturePadOptions.canvasWidth + 'px' }">
+                            <button class="btn" type="submit" data-bs-toggle="modal"
+                                data-bs-target="#sign-secretario-modal">Confirmar</button>
+                            <button class="btn ms-3" (click)="limpiarSecretario()" type="submit">Limpiar</button>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="Secretario.sign">
+                    <img [src]="Secretario.sign"
+                        [ngStyle]="{ 'height': signaturePadOptions.canvasHeight + 'px', 'width': signaturePadOptions.canvasWidth + 'px' }"
+                        style="border-bottom: 0.0625rem solid #000000;">
+                </ng-container>
+                <p style="font-weight: bold; color: #171717; margin: 0;">
+                    {{Secretario.summoned?.nombre?.toUpperCase()}}
+                </p>
+                <p style="margin: 0;">{{Secretario.summoned?.identificacion}}</p>
+            </div>
+            <div class="row-end"></div>
+        </div>
+    </div>
+
+    <ng-template #options let-program="program">
+        <div style="padding-left: 1rem;" *ngIf="program.opciones.length">
+            <ng-container *ngFor="let option of program.opciones;">
+                <ng-container *ngIf="+option.tipo === 0">
+                    <ng-container *ngTemplateOutlet="title; context: { program: option, option: true }">
+                    </ng-container>
+                </ng-container>
+                <ng-container *ngIf="+option.tipo === 1">
+                    <ng-container *ngTemplateOutlet="vote; context: { program: option, option: true }"></ng-container>
+                </ng-container>
+                <ng-container *ngIf="+option.tipo === 5">
+                    <ng-container *ngTemplateOutlet="election; context: { program: option, option: true }">
+                    </ng-container>
+                </ng-container>
+            </ng-container>
+        </div>
+    </ng-template>
+
+    <ng-template #title let-program="program" let-option="option">
+        <h6 style="text-transform: uppercase; margin: 0 0 1rem 0; font-weight: bold;">
+            <ng-container *ngIf="!option">
+                {{program.orden}}. {{program.titulo}}
+            </ng-container>
+            <ng-container *ngIf="option">
+                <span style="text-transform: lowercase;">{{program.orden | letrasOrdenadas:1}}</span>.
+                <span>{{program.titulo}}</span>
+            </ng-container>
+        </h6>
+        <p style="white-space: pre-line;" *ngIf="program.descripcion">
+            {{program.descripcion}}
+        </p>
+    </ng-template>
+
+
+    <ng-template #vote let-program="program" let-option="option">
+        <ng-container *ngTemplateOutlet="title; context: { program: program, option: option }"></ng-container>
+        <p>
+            Se somete a aprobación y es {{(1 |
+            getPercent:program:answerList:summonedLoggedinList) >= 0.5 ? (
+            'aprobado por el ' + ((1 |
+            getPercent:program:answerList:summonedLoggedinList) *
+            100).toFixed(2)) : ('desaprobado por el ' + ((100-(1 |
+            getPercent:program:answerList:summonedLoggedinList) * 100).toFixed(2)))}}%
+            de los asociados presentes
+        </p>
+    </ng-template>
+
+    <ng-template #election let-program="program" let-option="option">
+        <ng-container *ngTemplateOutlet="title; context: { program: program, option: option }"></ng-container>
+        <p>
+            Se somete a aprobación y es {{(1 |
+            getElectionPercent:program:answerList:summonedLoggedinList) >= 0.5 ? (
+            'aprobado por el ' + ((1 |
+            getElectionPercent:program:answerList:summonedLoggedinList) *
+            100).toFixed(2)) : ('desaprobado por el ' + ((100-(1 |
+            getPercent:program:answerList:summonedLoggedinList) * 100).toFixed(2)))}}%
+            de los asociados presentes
+        </p>
+    </ng-template>
+
+    <!-- Modal guardar pdf -->
+    <div class="modal fade" id="acta-confirm-modal" tabindex="-1" aria-labelledby="acta-confirm-modal-label"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="acta-confirm-modal-label">Guardar acta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="padding: 1rem;">
+                    <p class="text-align-center margin-0" style="font-size: 0.7rem;">
+                        Esta acción dará por finalizada la edición del acta.
+                        <br>
+                        ¿Esta seguro que desea guardar este acta?
+                    </p>
+                </div>
+                <div class="modal-footer border-top-none">
+                    <button class="btn outline-btn small-btn pt-tertiary" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn filled-btn small-btn pt-septenary" data-bs-dismiss="modal"
+                        (click)="download('save')">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal confirmar firma presidente -->
+    <div class="modal fade" id="sign-presidente-modal" tabindex="-1" aria-labelledby="sign-presidente-modal-label"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sign-presidente-modal-label">Guardar acta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="padding: 1rem;">
+                    <p class="text-align-center margin-0" style="font-size: 0.7rem;">
+                        Esta acción dará por finalizada la edición del acta.
+                        <br>
+                        ¿Esta seguro que desea confirmar esta firma?
+                    </p>
+                </div>
+                <div class="modal-footer border-top-none">
+                    <button class="btn outline-btn small-btn pt-tertiary" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn filled-btn small-btn pt-septenary" data-bs-dismiss="modal"
+                        (click)="drawCompletePresidente()">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal confirmar firma secretario -->
+    <div class="modal fade" id="sign-secretario-modal" tabindex="-1" aria-labelledby="sign-secretario-modal-label"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sign-secretario-modal-label">Guardar acta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="padding: 1rem;">
+                    <p class="text-align-center margin-0" style="font-size: 0.7rem;">
+                        Esta acción dará por finalizada la edición del acta.
+                        <br>
+                        ¿Esta seguro que desea confirmar esta firma?
+                    </p>
+                </div>
+                <div class="modal-footer border-top-none">
+                    <button class="btn outline-btn small-btn pt-tertiary" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn filled-btn small-btn pt-septenary" data-bs-dismiss="modal"
+                        (click)="drawCompleteSecretario()">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn bg-primary cl-quaternary-i display-flex" style="position: absolute; right: 2rem; bottom: 2rem;"
+        (click)="download('download')">
+        <span class="me-3">Descargar</span>
+        <i class="fas fa-file-pdf block"></i>
+    </button>
+
+    <ng-container *ngIf="rol === 'Administrador'">
+        <button class="btn bg-primary cl-quaternary-i display-flex" data-bs-target="#acta-confirm-modal"
+            data-bs-toggle="modal" style="position: absolute; right: 2rem; bottom: 5rem;">
+            <span class="me-3">Guardar</span>
+            <i class="fas fa-save block"></i>
+        </button>
+    </ng-container>
+
+</div>
